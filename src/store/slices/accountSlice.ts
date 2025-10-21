@@ -20,11 +20,69 @@ export const getUserStatistic = createAsyncThunk<
   Account,
   string,
   { rejectValue: unknown }
->('auth/getUserStatistic', async (id, { rejectWithValue }) => {
+>('account/getUserStatistic', async (id, { rejectWithValue }) => {
   try {
     const response = await axios.get(`/api/users/${id}/statistic`, {
       withCredentials: true,
     });
+    const data = response.data;
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
+
+export const deleteUser = createAsyncThunk<
+  undefined,
+  undefined,
+  { rejectValue: unknown }
+>('account/deleteUser', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.delete(`/api/me`, {
+      withCredentials: true,
+    });
+    const data = response.data;
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
+
+export const changeUsername = createAsyncThunk<
+  undefined,
+  { username: string },
+  { rejectValue: unknown }
+>('account/changeUsername', async (userData, { rejectWithValue }) => {
+  try {
+    const response = await axios.patch(`/api/me`, JSON.stringify(userData), {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = response.data;
+    return data.data;
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
+
+export const changePassword = createAsyncThunk<
+  undefined,
+  { oldPassword: string; newPassword: string },
+  { rejectValue: unknown }
+>('account/changePassword', async (userData, { rejectWithValue }) => {
+  try {
+    const response = await axios.patch(
+      `/api/me/password`,
+      JSON.stringify(userData),
+      {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    );
     const data = response.data;
     return data.data;
   } catch (err) {
@@ -48,6 +106,7 @@ const accountSlice = createSlice({
         state.status = 'fullfilled';
       },
     );
+    builder.addCase(deleteUser.fulfilled, () => initialState);
   },
 });
 
