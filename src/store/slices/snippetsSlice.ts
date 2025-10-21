@@ -5,6 +5,8 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+import { getSnippet } from './currentSnippetSlice';
+
 interface User {
   id: string;
   username: string;
@@ -74,20 +76,6 @@ export const getAllSnippets = createAsyncThunk<
     const response = await axios.get(
       `/api/snippets?page=${page}&limit=15&sortBy=id:ASC`,
     );
-    const data = response.data;
-    return data.data;
-  } catch (err) {
-    rejectWithValue(err);
-  }
-});
-
-export const getSnippet = createAsyncThunk<
-  Snippet,
-  string,
-  { rejectValue: unknown }
->('snippets/getSnippet', async (id, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`/api/snippets/${id}`);
     const data = response.data;
     return data.data;
   } catch (err) {

@@ -4,6 +4,7 @@ import { FaUser } from 'react-icons/fa';
 import { AiOutlineLike, AiOutlineDislike } from 'react-icons/ai';
 import { FaRegComments } from 'react-icons/fa6';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router';
 
 import styles from './Snippet.module.scss';
 import {
@@ -23,6 +24,7 @@ export const Snippet = ({
   id,
 }: SnippetProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { status, user: currentUser } = useAppSelector((state) => state.auth);
   const isAuthorized = status === 'authorized';
 
@@ -80,6 +82,10 @@ export const Snippet = ({
     );
   };
 
+  const handleCommentClick = () => {
+    navigate(`/snippet/${id}`);
+  };
+
   return (
     <div className={styles.snippet}>
       <div className={styles.snippetHeader}>
@@ -107,7 +113,10 @@ export const Snippet = ({
           </div>
         </div>
         <div className={styles.infoItem}>
-          <FaRegComments className={iCommentClasses} />
+          <FaRegComments
+            className={iCommentClasses}
+            onClick={handleCommentClick}
+          />
           <span>{commentsCount}</span>
         </div>
       </div>

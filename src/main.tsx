@@ -11,6 +11,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { PrivateRoutes } from './pages/PrivateRoutes';
 import store from './store';
 import './index.scss';
+import { SnippetPage } from './pages/SnippetPage';
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,12 @@ const router = createBrowserRouter([
       },
       {
         Component: PrivateRoutes,
-        children: [],
+        children: [
+          {
+            path: '/snippet/:snippetId',
+            Component: SnippetPage,
+          },
+        ],
       },
     ],
   },
