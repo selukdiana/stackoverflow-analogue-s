@@ -1,0 +1,77 @@
+.snippet {
+  border-radius: 5px;
+  border: 1px solid #b3b3b3;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.snippetInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.snippetLikesDislikes {
+  display: flex;
+  gap: 10px;
+}
+
+.iUser,
+.iLike,
+.iDislike,
+.iComment {
+  color: #b3b3b3;
+  margin-right: 5px;
+  transition: 0.3s;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.iLike {
+  &.active:hover,
+  &.clicked {
+    color: red;
+  }
+}
+.iDislike {
+  &.active:hover,
+  &.clicked {
+    color: black;
+  }
+}
+
+.iComment {
+  &.active:hover,
+  &.clicked {
+    color: #1b75d0;
+  }
+}
+
+.active {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.clicked {
+  pointer-events: none;
+}
+
+.language {
+  color: #1b75d0;
+}
+
+.snippetHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
