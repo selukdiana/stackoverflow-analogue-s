@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router';
 
 import styles from './Layout.module.scss';

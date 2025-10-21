@@ -1,4 +1,3 @@
-import React from 'react';
 import classNames from 'classnames';
 import { Link } from 'react-router';
 import { FaHouse } from 'react-icons/fa6';

@@ -17,6 +17,12 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/api/, ''),
         secure: false,
       },
+      '/server': {
+        target: 'https://codelang.vercel.app',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/server/, ''),
+        secure: false,
+      },
     },
   },
 });

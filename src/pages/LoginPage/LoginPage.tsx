@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, type FormEvent, useState } from 'react';
+import { type ChangeEvent, type FormEvent, useState } from 'react';
 import { Navigate } from 'react-router';
 
 import styles from './LoginPage.module.scss';

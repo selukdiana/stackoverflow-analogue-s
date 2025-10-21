@@ -7,7 +7,7 @@ import axios from 'axios';
 
 import { getSnippet } from './currentSnippetSlice';
 
-interface User {
+export interface User {
   id: string;
   username: string;
   role: 'user';
@@ -19,7 +19,7 @@ interface Mark {
   user: User;
 }
 
-interface Comment {
+export interface Comment {
   id: string;
   content: string;
 }
