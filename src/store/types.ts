@@ -47,3 +47,18 @@ export type Links = {
 };
 
 export type LoadingStatus = 'pending' | 'fullfilled' | 'rejected';
+
+export type UserStatistic = {
+  snippetsCount: number;
+  rating: number;
+  commentsCount: number;
+  likesCount: number;
+  dislikesCount: number;
+  questionsCount: number;
+  correctAnswersCount: number;
+  regularAnswersCount: number;
+};
+
+export type Account = User & {
+  statistic: UserStatistic;
+};

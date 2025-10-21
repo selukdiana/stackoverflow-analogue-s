@@ -1,0 +1,39 @@
+.username span {
+  color: #1b75d0;
+}
+
+.username {
+  padding-top: 10px;
+}
+
+.user {
+  border-radius: 5px;
+  border: 1px solid #b3b3b3;
+  padding: 10px;
+  margin-top: 20px;
+  box-shadow: 0px -1px 10px 2px rgba(34, 60, 80, 0.2);
+}
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deleteBtn {
+  background-color: red;
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0px -1px 2px 2px red;
+  margin-top: 10px;
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.userStatistic {
+}

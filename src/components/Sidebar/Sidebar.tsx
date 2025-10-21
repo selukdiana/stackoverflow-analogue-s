@@ -28,7 +28,7 @@ export const Sidebar = ({ active }: SidebarProps) => {
       </Link>
       {status === 'authorized' && (
         <>
-          <Link to="/me" className={styles.item}>
+          <Link to={`/account/${user?.id}`} className={styles.item}>
             <FaRegUserCircle />
             My Account
           </Link>
