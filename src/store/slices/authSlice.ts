@@ -5,6 +5,8 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+import type { User } from './snippetsSlice';
+
 interface AuthState {
   status: 'unauthorized' | 'registered' | 'authorized' | 'pending';
   user?: {
@@ -16,6 +18,21 @@ interface AuthState {
 const initialState: AuthState = {
   status: 'unauthorized',
 };
+
+export const checkAuth = createAsyncThunk<
+  User,
+  undefined,
+  { rejectValue: unknown }
+>('auth/checkAuth', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get('/api/me', {
+      withCredentials: true,
+    });
+    return response.data.data;
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
 
 export const loginUser = createAsyncThunk<
   { username: string; id: string },
@@ -116,6 +133,15 @@ const authSlice = createSlice({
       state.status = 'unauthorized';
     });
     builder.addCase(logoutUser.fulfilled, () => initialState);
+    builder.addCase(
+      checkAuth.fulfilled,
+      (state, action: PayloadAction<User>) => {
+        const { id, username } = action.payload;
+        state.status = 'authorized';
+        state.user = { id, username };
+      },
+    );
+    builder.addCase(checkAuth.rejected, () => initialState);
   },
 });
 
