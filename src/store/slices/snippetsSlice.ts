@@ -6,50 +6,10 @@ import {
 import axios from 'axios';
 
 import { getSnippet } from './currentSnippetSlice';
+import type { Links, LoadingStatus, Meta, Snippet } from '../types';
 
-export interface User {
-  id: string;
-  username: string;
-  role: 'user';
-}
-
-interface Mark {
-  id: string;
-  type: 'like' | 'dislike';
-  user: User;
-}
-
-export interface Comment {
-  id: string;
-  content: string;
-}
-
-export interface Snippet {
-  id: string;
-  code: string;
-  language: 'JavaScript';
-  marks: Mark[];
-  user: User;
-  comments: Comment[];
-}
-
-export interface Meta {
-  itemsPerPage: number;
-  totalItems: number;
-  currentPage: number;
-  totalPages: number;
-  sortBy: [['id' | 'code' | 'language', 'ASC' | 'DESC']];
-}
-
-export interface Links {
-  first?: 'string';
-  previous?: 'string';
-  current?: 'string';
-  next?: 'string';
-  last?: 'string';
-}
 interface SnippetsState {
-  status: 'pending' | 'fullfilled' | 'rejected';
+  status: LoadingStatus;
   data: Snippet[];
   currentPage: number;
   totalPages: number;

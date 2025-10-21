@@ -5,14 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-import type { User } from './snippetsSlice';
+import type { AuthStatus, User } from '../types';
 
 interface AuthState {
-  status: 'unauthorized' | 'registered' | 'authorized' | 'pending';
-  user?: {
-    username: string;
-    id: string;
-  };
+  status: AuthStatus;
+  user?: User;
 }
 
 const initialState: AuthState = {
@@ -35,7 +32,7 @@ export const checkAuth = createAsyncThunk<
 });
 
 export const loginUser = createAsyncThunk<
-  { username: string; id: string },
+  User,
   {
     username: string;
     password: string;
@@ -60,11 +57,7 @@ export const loginUser = createAsyncThunk<
 });
 
 export const registerUser = createAsyncThunk<
-  {
-    id: number;
-    username: string;
-    role: string;
-  },
+  User,
   {
     username: string;
     password: string;
@@ -114,10 +107,10 @@ const authSlice = createSlice({
     });
     builder.addCase(
       loginUser.fulfilled,
-      (state, action: PayloadAction<{ username: string; id: string }>) => {
-        const { username, id } = action.payload;
+      (state, action: PayloadAction<User>) => {
+        const user = action.payload;
         state.status = 'authorized';
-        state.user = { username, id };
+        state.user = user;
       },
     );
     builder.addCase(loginUser.rejected, (state) => {
@@ -136,9 +129,9 @@ const authSlice = createSlice({
     builder.addCase(
       checkAuth.fulfilled,
       (state, action: PayloadAction<User>) => {
-        const { id, username } = action.payload;
+        const user = action.payload;
         state.status = 'authorized';
-        state.user = { id, username };
+        state.user = user;
       },
     );
     builder.addCase(checkAuth.rejected, () => initialState);

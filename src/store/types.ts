@@ -1,0 +1,49 @@
+export type AuthStatus =
+  | 'unauthorized'
+  | 'registered'
+  | 'authorized'
+  | 'pending';
+
+export type User = {
+  username: string;
+  id: string;
+  role: 'user' | 'admin';
+};
+
+export type Mark = {
+  id: string;
+  type: 'like' | 'dislike';
+  user: User;
+};
+
+export type Comment = {
+  id: string;
+  content: string;
+};
+
+export type Snippet = {
+  id: string;
+  code: string;
+  language: 'JavaScript';
+  marks: Mark[];
+  user: User;
+  comments: Comment[];
+};
+
+export type Meta = {
+  itemsPerPage: number;
+  totalItems: number;
+  currentPage: number;
+  totalPages: number;
+  sortBy: [['id' | 'code' | 'language', 'ASC' | 'DESC']];
+};
+
+export type Links = {
+  first?: 'string';
+  previous?: 'string';
+  current?: 'string';
+  next?: 'string';
+  last?: 'string';
+};
+
+export type LoadingStatus = 'pending' | 'fullfilled' | 'rejected';
