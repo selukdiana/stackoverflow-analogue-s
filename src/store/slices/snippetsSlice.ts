@@ -29,12 +29,12 @@ interface SnippetsResponse extends SnippetsState {
 
 export const getAllSnippets = createAsyncThunk<
   SnippetsResponse,
-  number,
+  { page: number; userId: string | null },
   { rejectValue: unknown }
->('snippets/getAll', async (page, { rejectWithValue }) => {
+>('snippets/getAll', async ({ page, userId }, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      `/api/snippets?page=${page}&limit=15&sortBy=id:ASC`,
+      `/api/snippets?page=${page}&limit=15&sortBy=id:ASC${userId ? '&userId=' + userId : ''}`,
     );
     const data = response.data;
     return data.data;

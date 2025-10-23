@@ -41,6 +41,7 @@ const router = createBrowserRouter([
           },
           { path: '/account/:userId', Component: AccountPage },
           { path: '/snippet/new', Component: CreateSnippetPage },
+          { path: '/snippets', Component: HomePage },
         ],
       },
     ],

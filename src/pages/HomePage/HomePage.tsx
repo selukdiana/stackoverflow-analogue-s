@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Snippet } from '../../components/Snippet';
@@ -19,6 +20,9 @@ export const HomePage = () => {
     totalPages,
   } = useAppSelector((state) => state.snippets);
 
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userId');
+
   const toNextPage = () => {
     dispatch(setNextPage());
   };
@@ -28,8 +32,8 @@ export const HomePage = () => {
   };
 
   useEffect(() => {
-    dispatch(getAllSnippets(currentPage));
-  }, [currentPage, dispatch]);
+    dispatch(getAllSnippets({ page: currentPage, userId }));
+  }, [currentPage, dispatch, userId]);
 
   return (
     <main className={styles.homePage}>

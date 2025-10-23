@@ -13,7 +13,6 @@ interface SidebarProps {
 }
 export const Sidebar = ({ active }: SidebarProps) => {
   const { status, user } = useAppSelector((state) => state.auth);
-  console.log(status + user?.username);
 
   const sidebarClasses = classNames(styles.sidebar, active && styles.active);
   return (
@@ -36,7 +35,10 @@ export const Sidebar = ({ active }: SidebarProps) => {
             <FaRegFile />
             Post snippet
           </Link>
-          <Link to="/snippets" className={styles.item}>
+          <Link
+            to={{ pathname: '/snippets', search: `?userId=${user?.id}` }}
+            className={styles.item}
+          >
             <TbFileStack />
             My snippets
           </Link>

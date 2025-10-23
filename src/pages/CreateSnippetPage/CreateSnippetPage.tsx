@@ -16,6 +16,7 @@ export const CreateSnippetPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const languages = useAppSelector((state) => state.newSnippet.languages);
+  const userId = useAppSelector((state) => state.auth.user?.id);
   const [selectedLanguage, setSelectedLanguage] = useState(
     languages[0] || 'JavaScript',
   );
@@ -37,7 +38,7 @@ export const CreateSnippetPage = () => {
     dispatch(
       createSnippet({ language: selectedLanguage, code: codeSnippetValue }),
     ).then(() => {
-      navigate('/');
+      navigate({ pathname: '/snippets', search: `?userId=${userId}` });
     });
   };
 
