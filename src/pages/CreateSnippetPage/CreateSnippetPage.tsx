@@ -68,7 +68,9 @@ export const CreateSnippetPage = () => {
           }}
         />
       </div>
-      <Button handleClick={handleButtonClick}>Post</Button>
+      <div className={styles.postBtn}>
+        <Button handleClick={handleButtonClick}>Post</Button>
+      </div>
     </>
   );
 };
