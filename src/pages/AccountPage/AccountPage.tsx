@@ -1,21 +1,19 @@
 import { useParams } from 'react-router';
 import { useEffect, type FormEvent } from 'react';
-import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   changePassword,
   changeUsername,
-  deleteUser,
   getUserStatistic,
 } from '../../store/slices/accountSlice';
 import styles from './AccountPage.module.scss';
-import { StatisticItem } from '../../components/StatisticItem';
 import { Form } from '../../components/Form';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { resetStore } from '../../store/rootReducer';
 import { useForm } from '../../hooks';
+import { UserInfo } from '../../components/UserInfo';
 
 export const AccountPage = () => {
   const dispatch = useAppDispatch();
@@ -33,13 +31,6 @@ export const AccountPage = () => {
   const { status, data: accountInfo } = useAppSelector(
     (state) => state.account,
   );
-  const { username, role, statistic } = accountInfo || {};
-
-  const handleDeleteAccountClick = () => {
-    dispatch(deleteUser()).then(() => {
-      dispatch(resetStore());
-    });
-  };
 
   const handleChangeUsernameClick = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,37 +62,9 @@ export const AccountPage = () => {
   return (
     <>
       <h3 className={styles.username}>
-        Welcome, <span>{username}</span>
+        Welcome, <span>{accountInfo.username}</span>
       </h3>
-      <div className={styles.user}>
-        <div className={styles.userInfo}>
-          <h4>{username}</h4>
-          <span>Id: {userId}</span>
-          <span>Role: {role}</span>
-          <button
-            className={styles.deleteBtn}
-            onClick={handleDeleteAccountClick}
-          >
-            <FaRegTrashAlt /> DELETE
-          </button>
-        </div>
-        <ul className={styles.userStatistic}>
-          <StatisticItem label="Rating" value={statistic?.rating} />
-          <StatisticItem label="Snippets" value={statistic?.snippetsCount} />
-          <StatisticItem label="Comments" value={statistic?.commentsCount} />
-          <StatisticItem label="Likes" value={statistic?.likesCount} />
-          <StatisticItem label="Dislikes" value={statistic?.dislikesCount} />
-          <StatisticItem label="Questions" value={statistic?.questionsCount} />
-          <StatisticItem
-            label="Correct Answers"
-            value={statistic?.correctAnswersCount}
-          />
-          <StatisticItem
-            label="Regular Answers"
-            value={statistic?.regularAnswersCount}
-          />
-        </ul>
-      </div>
+      <UserInfo {...accountInfo} />
       <div className={styles.accountForms}>
         <Form handleFormSubmit={handleChangeUsernameClick}>
           <Input
