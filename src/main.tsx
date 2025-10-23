@@ -13,6 +13,7 @@ import store from './store';
 import './index.scss';
 import { SnippetPage } from './pages/SnippetPage';
 import { AccountPage } from './pages/AccountPage';
+import { CreateSnippetPage } from './pages/CreateSnippetPage';
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
             Component: SnippetPage,
           },
           { path: '/account/:userId', Component: AccountPage },
+          { path: '/snippet/new', Component: CreateSnippetPage },
         ],
       },
     ],

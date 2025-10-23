@@ -32,7 +32,7 @@ export const Sidebar = ({ active }: SidebarProps) => {
             <FaRegUserCircle />
             My Account
           </Link>
-          <Link to="/snippet" className={styles.item}>
+          <Link to="/snippet/new" className={styles.item}>
             <FaRegFile />
             Post snippet
           </Link>
