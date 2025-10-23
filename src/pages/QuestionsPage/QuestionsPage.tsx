@@ -1,13 +1,15 @@
-import { useSearchParams } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getQuestions } from '../../store/slices/questionsSlice';
 import { Pagination } from '../../components/Pagination';
 import { Question } from '../../components/Question';
+import styles from './QuestionsPage.module.scss';
 
 export const QuestionsPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get('page') || 1;
 
@@ -36,6 +38,9 @@ export const QuestionsPage = () => {
 
   return (
     <>
+      <button onClick={() => navigate('/question')} className={styles.newBtn}>
+        + New question
+      </button>
       {questions.map((question) => (
         <Question question={question} key={question.id} />
       ))}

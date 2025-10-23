@@ -1,0 +1,11 @@
+.newBtn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 16px;
+  transition: 0.3s;
+  &:hover {
+    color: #1b75d0;
+  }
+}

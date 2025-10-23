@@ -38,31 +38,33 @@ export const RegisterPage = () => {
     <Navigate to="/login" />
   ) : (
     <div className={styles.registerPage}>
-      <Form handleFormSubmit={handleRegisterFormSubmit}>
-        <Input
-          label="Username"
-          type="text"
-          name="username"
-          onChange={onRegisterFormChange}
-          value={registerFormState.username}
-        />
-        <Input
-          label="Password"
-          type="password"
-          name="password"
-          onChange={onRegisterFormChange}
-          value={registerFormState.password}
-        />
-        <Input
-          label="Confirm password"
-          type="password"
-          name="confirmPassword"
-          onChange={onRegisterFormChange}
-          value={registerFormState.confirmPassword}
-        />
-        <FormLink to="/login">I&apos;ve already have an account.</FormLink>
-        <Button>Register</Button>
-      </Form>
+      <div className={styles.registerForm}>
+        <Form handleFormSubmit={handleRegisterFormSubmit}>
+          <Input
+            label="Username"
+            type="text"
+            name="username"
+            onChange={onRegisterFormChange}
+            value={registerFormState.username}
+          />
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            onChange={onRegisterFormChange}
+            value={registerFormState.password}
+          />
+          <Input
+            label="Confirm password"
+            type="password"
+            name="confirmPassword"
+            onChange={onRegisterFormChange}
+            value={registerFormState.confirmPassword}
+          />
+          <FormLink to="/login">I&apos;ve already have an account.</FormLink>
+          <Button>Register</Button>
+        </Form>
+      </div>
     </div>
   );
 };

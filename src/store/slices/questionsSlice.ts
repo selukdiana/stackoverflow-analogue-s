@@ -30,10 +30,10 @@ export const getQuestions = createAsyncThunk<
   QuestionsResponse,
   number,
   { rejectValue: unknown }
->('questions/geQuestions', async (page, { rejectWithValue }) => {
+>('questions/getQuestions', async (page, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      `/api/questions?page=${page}&limit=15&sortBy=id:ASC`,
+      `/api/questions?page=${page}&limit=15&sortBy=id:DESC`,
       {
         withCredentials: true,
       },

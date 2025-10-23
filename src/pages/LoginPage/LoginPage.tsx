@@ -29,24 +29,26 @@ export const LoginPage = () => {
     <Navigate to="/" />
   ) : (
     <div className={styles.loginPage}>
-      <Form handleFormSubmit={handleLoginFormSubmit}>
-        <Input
-          label="Username"
-          type="text"
-          name="username"
-          onChange={onLoginFormChange}
-          value={loginFormState.username}
-        />
-        <Input
-          label="Password"
-          type="password"
-          name="password"
-          onChange={onLoginFormChange}
-          value={loginFormState.password}
-        />
-        <FormLink to="/register">I don&apos;t have an account.</FormLink>
-        <Button>Login</Button>
-      </Form>
+      <div className={styles.loginForm}>
+        <Form handleFormSubmit={handleLoginFormSubmit}>
+          <Input
+            label="Username"
+            type="text"
+            name="username"
+            onChange={onLoginFormChange}
+            value={loginFormState.username}
+          />
+          <Input
+            label="Password"
+            type="password"
+            name="password"
+            onChange={onLoginFormChange}
+            value={loginFormState.password}
+          />
+          <FormLink to="/register">I don&apos;t have an account.</FormLink>
+          <Button>Login</Button>
+        </Form>
+      </div>
     </div>
   );
 };
