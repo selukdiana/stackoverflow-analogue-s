@@ -9,11 +9,26 @@ import type { Account, LoadingStatus } from '../types';
 
 interface AccountState {
   status: LoadingStatus;
-  data?: Account;
+  data: Account;
 }
 
 const initialState: AccountState = {
   status: 'pending',
+  data: {
+    username: '',
+    id: '',
+    role: 'user',
+    statistic: {
+      snippetsCount: 0,
+      rating: 0,
+      commentsCount: 0,
+      likesCount: 0,
+      dislikesCount: 0,
+      questionsCount: 0,
+      correctAnswersCount: 0,
+      regularAnswersCount: 0,
+    },
+  },
 };
 
 export const getUserStatistic = createAsyncThunk<
