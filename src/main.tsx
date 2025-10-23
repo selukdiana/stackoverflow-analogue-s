@@ -14,6 +14,7 @@ import './index.scss';
 import { SnippetPage } from './pages/SnippetPage';
 import { AccountPage } from './pages/AccountPage';
 import { CreateSnippetPage } from './pages/CreateSnippetPage';
+import { QuestionsPage } from './pages/QuestionsPage';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
           { path: '/account/:userId', Component: AccountPage },
           { path: '/snippet/new', Component: CreateSnippetPage },
           { path: '/snippets', Component: HomePage },
+          { path: '/questions', Component: QuestionsPage },
         ],
       },
     ],

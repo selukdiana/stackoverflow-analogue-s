@@ -42,7 +42,10 @@ export const Sidebar = ({ active }: SidebarProps) => {
             <TbFileStack />
             My snippets
           </Link>
-          <Link to="/questions" className={styles.item}>
+          <Link
+            to={{ pathname: '/questions', search: `page=1` }}
+            className={styles.item}
+          >
             <LuMessageCircleQuestion />
             Questions
           </Link>

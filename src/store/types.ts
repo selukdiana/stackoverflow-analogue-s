@@ -62,3 +62,19 @@ export type UserStatistic = {
 export type Account = User & {
   statistic: UserStatistic;
 };
+
+export type Answer = {
+  id: string;
+  content: string;
+  isCorrect: boolean;
+};
+
+export type Question = {
+  id: string;
+  title: string;
+  description: string;
+  attachedCode: string;
+  user: User;
+  answers: Answer[];
+  isResolved: boolean;
+};

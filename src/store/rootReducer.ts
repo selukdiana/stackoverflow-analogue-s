@@ -9,6 +9,7 @@ import snippetsReducer from './slices/snippetsSlice';
 import currentSnippetReducer from './slices/currentSnippetSlice';
 import accountReducer from './slices/accountSlice';
 import newSnippetReducer from './slices/newSnippetSlice';
+import questionsReducer from './slices/questionsSlice';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
@@ -16,6 +17,7 @@ const combinedReducer = combineReducers({
   currentSnippet: currentSnippetReducer,
   account: accountReducer,
   newSnippet: newSnippetReducer,
+  questions: questionsReducer,
 });
 export const resetStore = createAction('app/resetStore');
 
