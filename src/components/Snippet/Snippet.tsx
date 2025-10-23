@@ -7,10 +7,8 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 
 import styles from './Snippet.module.scss';
-import {
-  setSnippetMark,
-  type Snippet as SnippetType,
-} from '../../store/slices/snippetsSlice';
+import { setSnippetMark } from '../../store/slices/snippetsSlice';
+import { type Snippet as SnippetType } from '../../store/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
 type SnippetProps = SnippetType;
