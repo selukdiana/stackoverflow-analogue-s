@@ -16,6 +16,7 @@ import { AccountPage } from './pages/AccountPage';
 import { CreateSnippetPage } from './pages/CreateSnippetPage';
 import { QuestionsPage } from './pages/QuestionsPage';
 import { QuestionPage } from './pages/QuestionPage';
+import { UsersPage } from './pages/UsersPage';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
           { path: '/snippets', Component: HomePage },
           { path: '/questions', Component: QuestionsPage },
           { path: '/question', Component: QuestionPage },
+          { path: '/users', Component: UsersPage },
         ],
       },
     ],

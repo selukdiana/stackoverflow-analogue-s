@@ -49,7 +49,10 @@ export const Sidebar = ({ active }: SidebarProps) => {
             <LuMessageCircleQuestion />
             Questions
           </Link>
-          <Link to="/users" className={styles.item}>
+          <Link
+            to={{ pathname: '/users', search: `page=1` }}
+            className={styles.item}
+          >
             <LuUsersRound />
             Users
           </Link>
