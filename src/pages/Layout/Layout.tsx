@@ -24,7 +24,7 @@ export const Layout = () => {
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
-        <div className="container" style={{ height: '100%' }}>
+        <div className="container">
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
               <Burger
