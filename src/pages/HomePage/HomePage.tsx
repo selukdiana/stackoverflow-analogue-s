@@ -40,7 +40,7 @@ export const HomePage = () => {
       {status === 'pending' && 'loading'}
       {status === 'fullfilled' &&
         snippets.map((snippet) => {
-          return <Snippet {...snippet} key={snippet.id} />;
+          return <Snippet {...snippet} key={snippet.id} source="list" />;
         })}
       {status === 'fullfilled' && (
         <Pagination

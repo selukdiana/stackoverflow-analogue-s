@@ -6,8 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-import { getSnippet } from './currentSnippetSlice';
-import type { Links, LoadingStatus, Meta, Snippet, User } from '../types';
+import type { Links, LoadingStatus, Mark, Meta, Snippet, User } from '../types';
 import type { RootState } from '..';
 
 interface SnippetsState {
@@ -29,6 +28,13 @@ interface SnippetsResponse extends SnippetsState {
   links: Links;
 }
 
+interface OptimisticPayload {
+  id: string;
+  mark: 'like' | 'dislike';
+  user: User;
+  previousMark: Mark | null;
+}
+
 export const getAllSnippets = createAsyncThunk<
   SnippetsResponse,
   { page: number; userId: string | null },
@@ -45,11 +51,13 @@ export const getAllSnippets = createAsyncThunk<
   }
 });
 
-export const optimisticMark = createAction<{
-  id: string;
-  mark: 'like' | 'dislike';
-  user: User | undefined;
-}>('snippets/optimisticMark');
+export const optimisticMark = createAction<OptimisticPayload>(
+  'snippets/optimisticMark',
+);
+
+export const undoOptimisticMark = createAction<OptimisticPayload>(
+  'snippets/undoOptimisticMark',
+);
 
 export const setSnippetMark = createAsyncThunk<
   undefined,
@@ -59,8 +67,16 @@ export const setSnippetMark = createAsyncThunk<
   'snippets/setMark',
   async ({ mark, id }, { rejectWithValue, dispatch, getState }) => {
     const user = (getState() as RootState).auth.user;
-    if (!user) rejectWithValue('Not authorized!');
-    dispatch(optimisticMark({ mark, id, user }));
+    if (!user) return rejectWithValue('Not authorized!');
+
+    const snippet = (getState() as RootState).snippets.data.find(
+      (s) => s.id === id,
+    );
+    if (!snippet) return rejectWithValue('Snippet not found!');
+    const previousMark =
+      snippet.marks.find((m) => m.user.id === user.id) || null;
+    const optimisticPayload = { mark, id, user, previousMark };
+    dispatch(optimisticMark(optimisticPayload));
     try {
       const response = await axios.post(
         `/api/snippets/${id}/mark`,
@@ -73,10 +89,9 @@ export const setSnippetMark = createAsyncThunk<
         },
       );
       const data = response.data;
-      dispatch(getSnippet(id));
       return data;
     } catch (err) {
-      dispatch(getSnippet(id));
+      dispatch(undoOptimisticMark(optimisticPayload));
       rejectWithValue(err);
     }
   },
@@ -112,16 +127,6 @@ const snippetsSlice = createSlice({
       state.status = 'rejected';
       state.data = [];
     });
-    builder.addCase(
-      getSnippet.fulfilled,
-      (state, action: PayloadAction<Snippet>) => {
-        const snippet = action.payload;
-        state.data = state.data.map((item) => {
-          if (item.id === snippet.id) return snippet;
-          return item;
-        });
-      },
-    );
     builder.addCase(optimisticMark, (state, action) => {
       const { id, mark, user } = action.payload;
       const snippet = state.data.find((s) => s.id === id);
@@ -129,6 +134,23 @@ const snippetsSlice = createSlice({
       const existingMarks = snippet.marks.filter((m) => m.user.id !== user.id);
       existingMarks.push({ type: mark, user, id: '' });
       snippet.marks = existingMarks;
+    });
+    builder.addCase(undoOptimisticMark, (state, action) => {
+      const { id, previousMark, user } = action.payload;
+      const snippet = state.data.find((s) => s.id === id);
+      if (!snippet || !user) return;
+
+      if (previousMark) {
+        const existingMarks = snippet.marks.filter(
+          (m) => m.user.id !== user.id,
+        );
+        existingMarks.push(previousMark);
+        snippet.marks = existingMarks;
+      } else {
+        snippet.marks = snippet.marks.filter(
+          (m) => !(m.user.id === user.id && m.type === action.payload.mark),
+        );
+      }
     });
   },
 });

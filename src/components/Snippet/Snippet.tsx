@@ -7,11 +7,12 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 
 import styles from './Snippet.module.scss';
-import { setSnippetMark } from '../../store/slices/snippetsSlice';
+import { setSnippetMark as setSnippetMarkList } from '../../store/slices/snippetsSlice';
+import { setSnippetMark as setSnippetMarkCurrent } from '../../store/slices/currentSnippetSlice';
 import { type Snippet as SnippetType } from '../../store/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 
-type SnippetProps = SnippetType;
+type SnippetProps = SnippetType & { source: 'list' | 'snippet' };
 
 export const Snippet = ({
   code,
@@ -20,6 +21,7 @@ export const Snippet = ({
   marks,
   comments,
   id,
+  source,
 }: SnippetProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -62,21 +64,31 @@ export const Snippet = ({
     isAuthorized && styles.active,
   );
 
+  type PayloadType = {
+    mark: 'like' | 'dislike';
+    id: string;
+  };
   const handleLikeClick = () => {
+    const payload: PayloadType = {
+      mark: 'like',
+      id,
+    };
     dispatch(
-      setSnippetMark({
-        mark: 'like',
-        id,
-      }),
+      source === 'list'
+        ? setSnippetMarkList(payload)
+        : setSnippetMarkCurrent(payload),
     );
   };
 
   const handleDislikeClick = () => {
+    const payload: PayloadType = {
+      mark: 'dislike',
+      id,
+    };
     dispatch(
-      setSnippetMark({
-        mark: 'dislike',
-        id,
-      }),
+      source === 'list'
+        ? setSnippetMarkList(payload)
+        : setSnippetMarkCurrent(payload),
     );
   };
 
