@@ -19,6 +19,7 @@ export type Mark = {
 export type Comment = {
   id: string;
   content: string;
+  user: User;
 };
 
 export type Snippet = {
