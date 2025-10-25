@@ -21,10 +21,10 @@ import { UserPage } from './pages/UserPage';
 
 const router = createBrowserRouter([
   {
-    path: '/',
     Component: Layout,
     children: [
       {
+        path: '/',
         index: true,
         Component: HomePage,
       },

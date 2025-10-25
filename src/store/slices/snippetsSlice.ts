@@ -100,14 +100,7 @@ export const setSnippetMark = createAsyncThunk<
 const snippetsSlice = createSlice({
   name: 'snippets',
   initialState,
-  reducers: {
-    setNextPage(state) {
-      state.currentPage++;
-    },
-    setPrevPage(state) {
-      state.currentPage--;
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder.addCase(getAllSnippets.pending, (state) => {
       state.status = 'pending';
@@ -156,4 +149,3 @@ const snippetsSlice = createSlice({
 });
 
 export default snippetsSlice.reducer;
-export const { setNextPage, setPrevPage } = snippetsSlice.actions;
