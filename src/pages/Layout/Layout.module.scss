@@ -1,6 +1,4 @@
 .layout {
-  overflow: hidden;
-  overflow-y: auto;
 }
 
 .header {
@@ -51,7 +49,11 @@
 }
 
 .content {
-  padding-top: 60px;
+  position: relative;
+  top: 60px;
+  left: 0;
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
