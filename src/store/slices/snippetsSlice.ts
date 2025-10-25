@@ -1,4 +1,5 @@
 import {
+  createAction,
   createAsyncThunk,
   createSlice,
   type PayloadAction,
@@ -6,7 +7,8 @@ import {
 import axios from 'axios';
 
 import { getSnippet } from './currentSnippetSlice';
-import type { Links, LoadingStatus, Meta, Snippet } from '../types';
+import type { Links, LoadingStatus, Meta, Snippet, User } from '../types';
+import type { RootState } from '..';
 
 interface SnippetsState {
   status: LoadingStatus;
@@ -43,29 +45,42 @@ export const getAllSnippets = createAsyncThunk<
   }
 });
 
+export const optimisticMark = createAction<{
+  id: string;
+  mark: 'like' | 'dislike';
+  user: User | undefined;
+}>('snippets/optimisticMark');
+
 export const setSnippetMark = createAsyncThunk<
   undefined,
   { mark: 'like' | 'dislike'; id: string },
   { rejectValue: unknown }
->('snippets/setMark', async ({ mark, id }, { rejectWithValue, dispatch }) => {
-  try {
-    const response = await axios.post(
-      `/api/snippets/${id}/mark`,
-      JSON.stringify({ mark }),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
+>(
+  'snippets/setMark',
+  async ({ mark, id }, { rejectWithValue, dispatch, getState }) => {
+    const user = (getState() as RootState).auth.user;
+    if (!user) rejectWithValue('Not authorized!');
+    dispatch(optimisticMark({ mark, id, user }));
+    try {
+      const response = await axios.post(
+        `/api/snippets/${id}/mark`,
+        JSON.stringify({ mark }),
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
-    const data = response.data;
-    dispatch(getSnippet(id));
-    return data;
-  } catch (err) {
-    rejectWithValue(err);
-  }
-});
+      );
+      const data = response.data;
+      dispatch(getSnippet(id));
+      return data;
+    } catch (err) {
+      dispatch(getSnippet(id));
+      rejectWithValue(err);
+    }
+  },
+);
 
 const snippetsSlice = createSlice({
   name: 'snippets',
@@ -107,6 +122,14 @@ const snippetsSlice = createSlice({
         });
       },
     );
+    builder.addCase(optimisticMark, (state, action) => {
+      const { id, mark, user } = action.payload;
+      const snippet = state.data.find((s) => s.id === id);
+      if (!snippet || !user) return;
+      const existingMarks = snippet.marks.filter((m) => m.user.id !== user.id);
+      existingMarks.push({ type: mark, user, id: '' });
+      snippet.marks = existingMarks;
+    });
   },
 });
 
