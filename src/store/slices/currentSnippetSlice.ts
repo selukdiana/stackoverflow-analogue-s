@@ -1,5 +1,4 @@
 import {
-  createAction,
   createAsyncThunk,
   createSlice,
   type PayloadAction,
@@ -7,8 +6,9 @@ import {
 import axios from 'axios';
 
 import type { RootState } from '..';
-import type { LoadingStatus, Snippet, Comment, User, Mark } from '../types';
+import type { LoadingStatus, Snippet, Comment } from '../types';
 import socket from '../../socket';
+import { addMarkReducers } from './snippetMarks';
 
 interface CurrentSnippet {
   status: LoadingStatus;
@@ -25,55 +25,6 @@ const initialState: CurrentSnippet = {
   },
   status: 'pending',
 };
-interface OptimisticPayload {
-  id: string;
-  mark: 'like' | 'dislike';
-  user: User;
-  previousMark: Mark | null;
-}
-export const optimisticMark = createAction<OptimisticPayload>(
-  'snippets/optimisticMark',
-);
-
-export const undoOptimisticMark = createAction<OptimisticPayload>(
-  'snippets/undoOptimisticMark',
-);
-
-export const setSnippetMark = createAsyncThunk<
-  undefined,
-  { mark: 'like' | 'dislike'; id: string },
-  { rejectValue: unknown }
->(
-  'snippets/setMark',
-  async ({ mark, id }, { rejectWithValue, dispatch, getState }) => {
-    const user = (getState() as RootState).auth.user;
-    if (!user) return rejectWithValue('Not authorized!');
-
-    const snippet = (getState() as RootState).currentSnippet.snippet;
-    if (!snippet) return rejectWithValue('Snippet not found!');
-    const previousMark =
-      snippet.marks.find((m) => m.user.id === user.id) || null;
-    const optimisticPayload = { mark, id, user, previousMark };
-    dispatch(optimisticMark(optimisticPayload));
-    try {
-      const response = await axios.post(
-        `/api/snippets/${id}/mark`,
-        JSON.stringify({ mark }),
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      const data = response.data;
-      return data;
-    } catch (err) {
-      dispatch(undoOptimisticMark(optimisticPayload));
-      rejectWithValue(err);
-    }
-  },
-);
 
 export const getSnippet = createAsyncThunk<
   Snippet,
@@ -147,31 +98,11 @@ const currentSnippetSlice = createSlice({
       state.status = 'rejected';
       state.snippet = initialState.snippet;
     });
-    builder.addCase(optimisticMark, (state, action) => {
-      const { mark, user } = action.payload;
-      const snippet = state.snippet;
-      if (!snippet || !user) return;
-      const existingMarks = snippet.marks.filter((m) => m.user.id !== user.id);
-      existingMarks.push({ type: mark, user, id: '' });
-      snippet.marks = existingMarks;
-    });
-    builder.addCase(undoOptimisticMark, (state, action) => {
-      const { previousMark, user } = action.payload;
-      const snippet = state.snippet;
-      if (!snippet || !user) return;
-
-      if (previousMark) {
-        const existingMarks = snippet.marks.filter(
-          (m) => m.user.id !== user.id,
-        );
-        existingMarks.push(previousMark);
-        snippet.marks = existingMarks;
-      } else {
-        snippet.marks = snippet.marks.filter(
-          (m) => !(m.user.id === user.id && m.type === action.payload.mark),
-        );
-      }
-    });
+    addMarkReducers(
+      builder,
+      (_) => null,
+      (state) => state.snippet,
+    );
   },
 });
 

@@ -51,7 +51,7 @@ export const SnippetPage = () => {
   if (status === 'rejected') return <p>Error!</p>;
   return (
     <div className={styles.snippetPage}>
-      <Snippet {...snippet} source="snippet" />
+      <Snippet {...snippet} />
       <div className={styles.newCommentForm}>
         <Form handleFormSubmit={handleSendCommentBtnClick}>
           <Input

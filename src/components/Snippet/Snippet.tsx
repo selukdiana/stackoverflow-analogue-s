@@ -7,12 +7,11 @@ import classNames from 'classnames';
 import { useNavigate } from 'react-router';
 
 import styles from './Snippet.module.scss';
-import { setSnippetMark as setSnippetMarkList } from '../../store/slices/snippetsSlice';
-import { setSnippetMark as setSnippetMarkCurrent } from '../../store/slices/currentSnippetSlice';
 import { type Snippet as SnippetType } from '../../store/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setSnippetMark } from '../../store/slices/snippetMarks';
 
-type SnippetProps = SnippetType & { source: 'list' | 'snippet' };
+type SnippetProps = SnippetType;
 
 export const Snippet = ({
   code,
@@ -21,7 +20,6 @@ export const Snippet = ({
   marks,
   comments,
   id,
-  source,
 }: SnippetProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -73,11 +71,7 @@ export const Snippet = ({
       mark: 'like',
       id,
     };
-    dispatch(
-      source === 'list'
-        ? setSnippetMarkList(payload)
-        : setSnippetMarkCurrent(payload),
-    );
+    dispatch(setSnippetMark(payload));
   };
 
   const handleDislikeClick = () => {
@@ -85,11 +79,7 @@ export const Snippet = ({
       mark: 'dislike',
       id,
     };
-    dispatch(
-      source === 'list'
-        ? setSnippetMarkList(payload)
-        : setSnippetMarkCurrent(payload),
-    );
+    dispatch(setSnippetMark(payload));
   };
 
   const handleCommentClick = () => {
