@@ -32,24 +32,22 @@ export const AccountPage = () => {
     (state) => state.account,
   );
 
-  const handleChangeUsernameClick = (e: FormEvent<HTMLFormElement>) => {
+  const handleChangeUsernameClick = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(changeUsername(newUsername)).then(() => {
-      dispatch(resetStore());
-    });
+    await dispatch(changeUsername(newUsername));
+    dispatch(resetStore());
   };
 
-  const handleChangePasswordClick = (e: FormEvent<HTMLFormElement>) => {
+  const handleChangePasswordClick = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (pwd.newPassword !== pwd.confirmNewPassword) return;
-    dispatch(
+    await dispatch(
       changePassword({
         oldPassword: pwd.oldPassword,
         newPassword: pwd.newPassword,
       }),
-    ).then(() => {
-      dispatch(resetStore());
-    });
+    );
+    dispatch(resetStore());
   };
 
   useEffect(() => {

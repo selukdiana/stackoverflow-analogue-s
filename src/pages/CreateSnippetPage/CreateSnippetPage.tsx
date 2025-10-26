@@ -32,14 +32,13 @@ export const CreateSnippetPage = () => {
     setCodeSnippetValue(e.target.value);
   };
 
-  const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleButtonClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!codeSnippetValue) return;
-    dispatch(
+    await dispatch(
       createSnippet({ language: selectedLanguage, code: codeSnippetValue }),
-    ).then(() => {
-      navigate({ pathname: '/snippets', search: `?userId=${userId}` });
-    });
+    );
+    navigate({ pathname: '/snippets', search: `?userId=${userId}` });
   };
 
   useEffect(() => {

@@ -34,7 +34,7 @@ export const Sidebar = ({ active, onClose, burgerRef }: SidebarProps) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose]);
+  }, [onClose, burgerRef]);
 
   return (
     <div className={sidebarClasses} ref={sidebarRef}>

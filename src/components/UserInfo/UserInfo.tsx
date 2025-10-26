@@ -14,10 +14,9 @@ export const UserInfo = ({
   statistic,
 }: Account) => {
   const dispatch = useAppDispatch();
-  const handleDeleteAccountClick = () => {
-    dispatch(deleteUser()).then(() => {
-      dispatch(resetStore());
-    });
+  const handleDeleteAccountClick = async () => {
+    await dispatch(deleteUser());
+    dispatch(resetStore());
   };
 
   const currentUserId = useAppSelector((state) => state.auth.user?.id);
