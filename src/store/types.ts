@@ -79,3 +79,9 @@ export type Question = {
   answers: Answer[];
   isResolved: boolean;
 };
+
+export type Error = {
+  field: string;
+  recievedValue: string;
+  failures: string[];
+};

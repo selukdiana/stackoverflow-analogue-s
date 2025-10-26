@@ -1,7 +1,6 @@
 import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { resetStore } from '../../store/rootReducer';
 import { deleteUser } from '../../store/slices/accountSlice';
 import type { Account } from '../../store/types';
 import { StatisticItem } from '../StatisticItem';
@@ -14,9 +13,8 @@ export const UserInfo = ({
   statistic,
 }: Account) => {
   const dispatch = useAppDispatch();
-  const handleDeleteAccountClick = async () => {
-    await dispatch(deleteUser());
-    dispatch(resetStore());
+  const handleDeleteAccountClick = () => {
+    dispatch(deleteUser());
   };
 
   const currentUserId = useAppSelector((state) => state.auth.user?.id);

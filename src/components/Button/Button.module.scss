@@ -11,4 +11,8 @@
   &:hover {
     transform: translateY(-5%);
   }
+  &.disabled {
+    pointer-events: none;
+    background-color: grey;
+  }
 }

@@ -7,9 +7,17 @@ interface InputProps {
   type: 'text' | 'password' | 'email';
   name: string;
   value: string;
+  error?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
-export const Input = ({ label, type, onChange, name, value }: InputProps) => {
+export const Input = ({
+  label,
+  type,
+  onChange,
+  name,
+  value,
+  error,
+}: InputProps) => {
   return (
     <div className={styles.container}>
       <label className={styles.label}>{label}</label>
@@ -20,6 +28,7 @@ export const Input = ({ label, type, onChange, name, value }: InputProps) => {
         name={name}
         value={value}
       />
+      {error && <span className={styles.error}>{error}</span>}
     </div>
   );
 };

@@ -19,6 +19,10 @@ export const LoginPage = () => {
   });
 
   const status = useAppSelector((state) => state.auth.status);
+  const errors = useAppSelector((state) => state.auth.errors);
+
+  const isLoginBtnDisabled =
+    !loginFormState.username || !loginFormState.password;
 
   const handleLoginFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,9 +48,10 @@ export const LoginPage = () => {
             name="password"
             onChange={onLoginFormChange}
             value={loginFormState.password}
+            error={errors[0]?.failures[0]}
           />
           <FormLink to="/register">I don&apos;t have an account.</FormLink>
-          <Button>Login</Button>
+          <Button disabled={isLoginBtnDisabled}>Login</Button>
         </Form>
       </div>
     </div>

@@ -14,6 +14,7 @@ export const RegisterPage = () => {
   const dispatch = useAppDispatch();
 
   const status = useAppSelector((state) => state.auth.status);
+  const errors = useAppSelector((state) => state.auth.errors);
 
   const { values: registerFormState, handleChange: onRegisterFormChange } =
     useForm({
@@ -21,6 +22,12 @@ export const RegisterPage = () => {
       password: '',
       confirmPassword: '',
     });
+
+  const isRegisterBtnDisabled =
+    !registerFormState.username ||
+    !registerFormState.password ||
+    !registerFormState.confirmPassword ||
+    registerFormState.password !== registerFormState.confirmPassword;
 
   const handleRegisterFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,6 +53,9 @@ export const RegisterPage = () => {
             name="username"
             onChange={onRegisterFormChange}
             value={registerFormState.username}
+            error={
+              errors.find((error) => error.field === 'username')?.failures[0]
+            }
           />
           <Input
             label="Password"
@@ -53,6 +63,9 @@ export const RegisterPage = () => {
             name="password"
             onChange={onRegisterFormChange}
             value={registerFormState.password}
+            error={
+              errors.find((error) => error.field === 'password')?.failures[0]
+            }
           />
           <Input
             label="Confirm password"
@@ -62,7 +75,7 @@ export const RegisterPage = () => {
             value={registerFormState.confirmPassword}
           />
           <FormLink to="/login">I&apos;ve already have an account.</FormLink>
-          <Button>Register</Button>
+          <Button disabled={isRegisterBtnDisabled}>Register</Button>
         </Form>
       </div>
     </div>

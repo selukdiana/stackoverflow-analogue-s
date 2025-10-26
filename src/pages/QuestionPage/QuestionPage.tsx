@@ -28,6 +28,11 @@ export const QuestionPage = () => {
     reset,
   } = useForm(question);
 
+  const isSubmitBtnDisabled =
+    !questionData.title ||
+    !questionData.description ||
+    !questionData.attachedCode;
+
   const handleQuestionSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (mode === 'create') {
@@ -82,7 +87,7 @@ export const QuestionPage = () => {
           }}
         />
         <div className={styles.btn}>
-          <Button>Submit</Button>
+          <Button disabled={isSubmitBtnDisabled}>Submit</Button>
         </div>
       </Form>
     </div>

@@ -62,7 +62,7 @@ export const SnippetPage = () => {
             onChange={handleNewCommentChange}
           />
           <div className={styles.sendBtn}>
-            <Button>Send</Button>
+            <Button disabled={!newCommentFormValues.newComment}>Send</Button>
           </div>
         </Form>
       </div>

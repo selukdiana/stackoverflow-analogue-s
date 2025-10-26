@@ -1,7 +1,8 @@
 .container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  position: relative;
 }
 
 .label {
@@ -25,4 +26,12 @@
   &:focus {
     border: 2px solid #1b75d0;
   }
+}
+
+.error {
+  color: red;
+  font-size: 10px;
+  position: absolute;
+  top: 100%;
+  left: 0;
 }

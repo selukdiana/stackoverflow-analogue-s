@@ -68,7 +68,9 @@ export const CreateSnippetPage = () => {
         />
       </div>
       <div className={styles.postBtn}>
-        <Button handleClick={handleButtonClick}>Post</Button>
+        <Button handleClick={handleButtonClick} disabled={!codeSnippetValue}>
+          Post
+        </Button>
       </div>
     </>
   );

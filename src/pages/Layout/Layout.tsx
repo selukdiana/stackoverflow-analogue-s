@@ -6,7 +6,6 @@ import { Sidebar } from '../../components/Sidebar';
 import { Burger } from '../../components/Burger';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { logoutUser } from '../../store/slices/authSlice';
-import { resetStore } from '../../store/rootReducer';
 
 export const Layout = () => {
   const dispatch = useAppDispatch();
@@ -16,9 +15,8 @@ export const Layout = () => {
   const burgerRef = useRef<HTMLButtonElement>(null);
   const status = useAppSelector((state) => state.auth.status);
 
-  const handleLogout = async () => {
-    await dispatch(logoutUser());
-    await dispatch(resetStore());
+  const handleLogout = () => {
+    dispatch(logoutUser());
     navigate('/login');
   };
 

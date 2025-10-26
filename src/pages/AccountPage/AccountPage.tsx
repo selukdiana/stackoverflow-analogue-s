@@ -11,7 +11,6 @@ import styles from './AccountPage.module.scss';
 import { Form } from '../../components/Form';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
-import { resetStore } from '../../store/rootReducer';
 import { useForm } from '../../hooks';
 import { UserInfo } from '../../components/UserInfo';
 
@@ -28,26 +27,34 @@ export const AccountPage = () => {
     username: '',
   });
 
-  const { status, data: accountInfo } = useAppSelector(
-    (state) => state.account,
-  );
+  const {
+    status,
+    data: accountInfo,
+    errors,
+  } = useAppSelector((state) => state.account);
 
-  const handleChangeUsernameClick = async (e: FormEvent<HTMLFormElement>) => {
+  const isChangePasswordBtnDisabled =
+    !pwd.oldPassword ||
+    !pwd.newPassword ||
+    !pwd.confirmNewPassword ||
+    pwd.newPassword !== pwd.confirmNewPassword;
+
+  const isChangeUsernameBtnDisabled = !newUsername.username;
+
+  const handleChangeUsernameClick = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await dispatch(changeUsername(newUsername));
-    dispatch(resetStore());
+    dispatch(changeUsername(newUsername));
   };
 
-  const handleChangePasswordClick = async (e: FormEvent<HTMLFormElement>) => {
+  const handleChangePasswordClick = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (pwd.newPassword !== pwd.confirmNewPassword) return;
-    await dispatch(
+    dispatch(
       changePassword({
         oldPassword: pwd.oldPassword,
         newPassword: pwd.newPassword,
       }),
     );
-    dispatch(resetStore());
   };
 
   useEffect(() => {
@@ -71,8 +78,13 @@ export const AccountPage = () => {
             name="username"
             onChange={onUsernameChange}
             value={newUsername.username}
+            error={
+              errors.find((error) => error.field === 'username')?.failures[0]
+            }
           ></Input>
-          <Button>Change username</Button>
+          <Button disabled={isChangeUsernameBtnDisabled}>
+            Change username
+          </Button>
         </Form>
         <Form handleFormSubmit={handleChangePasswordClick}>
           <Input
@@ -81,6 +93,9 @@ export const AccountPage = () => {
             name="oldPassword"
             value={pwd.oldPassword}
             onChange={onPwdChange}
+            error={
+              errors.find((error) => error.field === 'oldPassword')?.failures[0]
+            }
           />
           <Input
             label="New password:"
@@ -88,6 +103,9 @@ export const AccountPage = () => {
             name="newPassword"
             value={pwd.newPassword}
             onChange={onPwdChange}
+            error={
+              errors.find((error) => error.field === 'newPassword')?.failures[0]
+            }
           />
           <Input
             label="Confirm password:"
@@ -96,7 +114,9 @@ export const AccountPage = () => {
             value={pwd.confirmNewPassword}
             onChange={onPwdChange}
           />
-          <Button>Change password</Button>
+          <Button disabled={isChangePasswordBtnDisabled}>
+            Change password
+          </Button>
         </Form>
       </div>
     </>

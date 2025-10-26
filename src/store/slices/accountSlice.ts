@@ -3,13 +3,15 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 
-import type { Account, LoadingStatus } from '../types';
+import type { Account, LoadingStatus, Error } from '../types';
+import { resetStore } from '../rootReducer';
 
 interface AccountState {
   status: LoadingStatus;
   data: Account;
+  errors: Error[];
 }
 
 const initialState: AccountState = {
@@ -29,6 +31,7 @@ const initialState: AccountState = {
       regularAnswersCount: 0,
     },
   },
+  errors: [],
 };
 
 export const getUserStatistic = createAsyncThunk<
@@ -51,13 +54,12 @@ export const deleteUser = createAsyncThunk<
   undefined,
   undefined,
   { rejectValue: unknown }
->('account/deleteUser', async (_, { rejectWithValue }) => {
+>('account/deleteUser', async (_, { rejectWithValue, dispatch }) => {
   try {
-    const response = await axios.delete(`/api/me`, {
+    await axios.delete(`/api/me`, {
       withCredentials: true,
     });
-    const data = response.data;
-    return data.data;
+    dispatch(resetStore());
   } catch (err) {
     return rejectWithValue(err);
   }
@@ -66,42 +68,42 @@ export const deleteUser = createAsyncThunk<
 export const changeUsername = createAsyncThunk<
   undefined,
   { username: string },
-  { rejectValue: unknown }
->('account/changeUsername', async (userData, { rejectWithValue }) => {
+  { rejectValue: Error[] }
+>('account/changeUsername', async (userData, { rejectWithValue, dispatch }) => {
   try {
-    const response = await axios.patch(`/api/me`, JSON.stringify(userData), {
+    await axios.patch(`/api/me`, JSON.stringify(userData), {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    const data = response.data;
-    return data.data;
+    dispatch(resetStore());
   } catch (err) {
-    return rejectWithValue(err);
+    if (isAxiosError(err) && err.response?.data?.errors) {
+      return rejectWithValue(err.response.data.errors);
+    }
   }
 });
 
 export const changePassword = createAsyncThunk<
   undefined,
   { oldPassword: string; newPassword: string },
-  { rejectValue: unknown }
->('account/changePassword', async (userData, { rejectWithValue }) => {
+  { rejectValue: Error[] | string }
+>('account/changePassword', async (userData, { rejectWithValue, dispatch }) => {
   try {
-    const response = await axios.patch(
-      `/api/me/password`,
-      JSON.stringify(userData),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    await axios.patch(`/api/me/password`, JSON.stringify(userData), {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
-    const data = response.data;
-    return data.data;
+    });
+    dispatch(resetStore());
   } catch (err) {
-    return rejectWithValue(err);
+    if (isAxiosError(err) && err.response?.data?.errors) {
+      return rejectWithValue(err.response.data.errors);
+    } else if (isAxiosError(err) && err.response?.data?.message) {
+      return rejectWithValue(err.response.data.message);
+    }
   }
 });
 
@@ -122,6 +124,38 @@ const accountSlice = createSlice({
       },
     );
     builder.addCase(deleteUser.fulfilled, () => initialState);
+    builder.addCase(changeUsername.pending, (state) => {
+      state.errors = [];
+    });
+    builder.addCase(
+      changeUsername.rejected,
+      (state, action: PayloadAction<Error[] | undefined>) => {
+        if (action.payload) {
+          state.errors = action.payload;
+        }
+      },
+    );
+    builder.addCase(changePassword.pending, (state) => {
+      state.errors = [];
+    });
+    builder.addCase(
+      changePassword.rejected,
+      (state, action: PayloadAction<Error[] | string | undefined>) => {
+        if (action.payload) {
+          if (typeof action.payload === 'string') {
+            state.errors = [
+              {
+                failures: [action.payload],
+                field: 'oldPassword',
+                recievedValue: '',
+              },
+            ];
+          } else {
+            state.errors = action.payload;
+          }
+        }
+      },
+    );
   },
 });
 
