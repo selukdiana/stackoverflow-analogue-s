@@ -1,8 +1,12 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .snippet {
   border-radius: 5px;
-  border: 1px solid #b3b3b3;
   padding: 10px;
   margin-top: 20px;
+  box-shadow: 0px -1px 10px 2px map.get(colors.$colors, 'shadow');
+  background: map.get(colors.$colors, 'bg');
 }
 
 .userInfo {
@@ -40,7 +44,7 @@
 .iLike {
   &.active:hover,
   &.clicked {
-    color: red;
+    color: map.get(colors.$colors, 'error');
   }
 }
 .iDislike {
@@ -53,7 +57,7 @@
 .iComment {
   &.active:hover,
   &.clicked {
-    color: #1b75d0;
+    color: map.get(colors.$colors, 'primary');
   }
 }
 
@@ -67,7 +71,7 @@
 }
 
 .language {
-  color: #1b75d0;
+  color: map.get(colors.$colors, 'primary');
 }
 
 .snippetHeader {

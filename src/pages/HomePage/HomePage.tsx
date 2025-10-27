@@ -1,35 +1,42 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { Snippet } from '../../components/Snippet';
-import {
-  getAllSnippets,
-  setNextPage,
-  setPrevPage,
-} from '../../store/slices/snippetsSlice';
+import { getAllSnippets } from '../../store/slices/snippetsSlice';
 import styles from './HomePage.module.scss';
 import { Pagination } from '../../components/Pagination';
 
 export const HomePage = () => {
   const dispatch = useAppDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get('page') || 1;
+  const userId = searchParams.get('userId');
   const {
     status,
     data: snippets,
-    currentPage,
     totalPages,
   } = useAppSelector((state) => state.snippets);
 
-  const toNextPage = () => {
-    dispatch(setNextPage());
+  const handleNextPageClick = () => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('page', `${+page + 1}`);
+      return params;
+    });
   };
 
-  const toPrevPage = () => {
-    dispatch(setPrevPage());
+  const handlePrevPageClick = () => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('page', `${+page - 1}`);
+      return params;
+    });
   };
 
   useEffect(() => {
-    dispatch(getAllSnippets(currentPage));
-  }, [currentPage, dispatch]);
+    dispatch(getAllSnippets({ page: +page, userId }));
+  }, [page, dispatch, userId]);
 
   return (
     <main className={styles.homePage}>
@@ -40,9 +47,9 @@ export const HomePage = () => {
         })}
       {status === 'fullfilled' && (
         <Pagination
-          currentPage={currentPage}
-          handleNextClick={toNextPage}
-          handlePrevClick={toPrevPage}
+          currentPage={+page}
+          handleNextClick={handleNextPageClick}
+          handlePrevClick={handlePrevPageClick}
           totalPages={totalPages}
         />
       )}

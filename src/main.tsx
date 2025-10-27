@@ -11,13 +11,20 @@ import { RegisterPage } from './pages/RegisterPage';
 import { PrivateRoutes } from './pages/PrivateRoutes';
 import store from './store';
 import './index.scss';
+import { SnippetPage } from './pages/SnippetPage';
+import { AccountPage } from './pages/AccountPage';
+import { CreateSnippetPage } from './pages/CreateSnippetPage';
+import { QuestionsPage } from './pages/QuestionsPage';
+import { QuestionPage } from './pages/QuestionPage';
+import { UsersPage } from './pages/UsersPage';
+import { UserPage } from './pages/UserPage';
 
 const router = createBrowserRouter([
   {
-    path: '/',
     Component: Layout,
     children: [
       {
+        path: '/',
         index: true,
         Component: HomePage,
       },
@@ -31,7 +38,19 @@ const router = createBrowserRouter([
       },
       {
         Component: PrivateRoutes,
-        children: [],
+        children: [
+          {
+            path: '/snippet/:snippetId',
+            Component: SnippetPage,
+          },
+          { path: '/account/:userId', Component: AccountPage },
+          { path: '/snippet/new', Component: CreateSnippetPage },
+          { path: '/snippets', Component: HomePage },
+          { path: '/questions', Component: QuestionsPage },
+          { path: '/question', Component: QuestionPage },
+          { path: '/users', Component: UsersPage },
+          { path: '/user/:userId', Component: UserPage },
+        ],
       },
     ],
   },

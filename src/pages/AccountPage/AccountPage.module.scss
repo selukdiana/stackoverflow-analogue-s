@@ -1,0 +1,18 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
+.username span {
+  color: map.get(colors.$colors, 'primary');
+}
+
+.username {
+  padding-top: 10px;
+}
+
+.accountForms {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  gap: 50px;
+  padding: 0 10px 50px;
+}

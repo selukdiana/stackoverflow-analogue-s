@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 
 import styles from './Layout.module.scss';
 import { Sidebar } from '../../components/Sidebar';
@@ -10,26 +10,34 @@ import { logoutUser } from '../../store/slices/authSlice';
 export const Layout = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const status = useAppSelector((state) => state.auth.status);
 
   const handleLogout = () => {
-    dispatch(logoutUser()).then(() => navigate('/login'));
+    dispatch(logoutUser());
+    navigate('/login');
   };
 
   const handleBurgerClick = () => {
     setIsSidebarOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
+
   return (
     <div className={styles.layout}>
       <header className={styles.header}>
-        <div className="container" style={{ height: '100%' }}>
+        <div className="container">
           <div className={styles.headerContent}>
             <div className={styles.headerLeft}>
               <Burger
                 onBurgerClick={handleBurgerClick}
                 active={isSidebarOpen}
+                ref={burgerRef}
               />
               <Link to={'/'}>
                 <h1 className={styles.logo}>Stackoverflow</h1>
@@ -55,7 +63,11 @@ export const Layout = () => {
           </div>
         </div>
       </header>
-      <Sidebar active={isSidebarOpen} />
+      <Sidebar
+        active={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        burgerRef={burgerRef}
+      />
       <div className={styles.content}>
         <div className="container">
           <Outlet />

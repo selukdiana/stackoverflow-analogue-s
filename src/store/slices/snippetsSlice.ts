@@ -5,49 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-interface User {
-  id: string;
-  username: string;
-  role: 'user';
-}
+import type { Links, LoadingStatus, Meta, Snippet } from '../types';
+import { addMarkReducers } from './snippetMarks';
 
-interface Mark {
-  id: string;
-  type: 'like' | 'dislike';
-  user: User;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-}
-
-export interface Snippet {
-  id: string;
-  code: string;
-  language: 'JavaScript';
-  marks: Mark[];
-  user: User;
-  comments: Comment[];
-}
-
-export interface Meta {
-  itemsPerPage: number;
-  totalItems: number;
-  currentPage: number;
-  totalPages: number;
-  sortBy: [['id' | 'code' | 'language', 'ASC' | 'DESC']];
-}
-
-export interface Links {
-  first?: 'string';
-  previous?: 'string';
-  current?: 'string';
-  next?: 'string';
-  last?: 'string';
-}
 interface SnippetsState {
-  status: 'pending' | 'fullfilled' | 'rejected';
+  status: LoadingStatus;
   data: Snippet[];
   currentPage: number;
   totalPages: number;
@@ -67,53 +29,15 @@ interface SnippetsResponse extends SnippetsState {
 
 export const getAllSnippets = createAsyncThunk<
   SnippetsResponse,
-  number,
+  { page: number; userId: string | null },
   { rejectValue: unknown }
->('snippets/getAll', async (page, { rejectWithValue }) => {
+>('snippets/getAll', async ({ page, userId }, { rejectWithValue }) => {
   try {
     const response = await axios.get(
-      `/api/snippets?page=${page}&limit=15&sortBy=id:ASC`,
+      `/api/snippets?page=${page}&limit=15&sortBy=id:ASC${userId ? '&userId=' + userId : ''}`,
     );
     const data = response.data;
     return data.data;
-  } catch (err) {
-    rejectWithValue(err);
-  }
-});
-
-export const getSnippet = createAsyncThunk<
-  Snippet,
-  string,
-  { rejectValue: unknown }
->('snippets/getSnippet', async (id, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`/api/snippets/${id}`);
-    const data = response.data;
-    return data.data;
-  } catch (err) {
-    rejectWithValue(err);
-  }
-});
-
-export const setSnippetMark = createAsyncThunk<
-  undefined,
-  { mark: 'like' | 'dislike'; id: string },
-  { rejectValue: unknown }
->('snippets/setMark', async ({ mark, id }, { rejectWithValue, dispatch }) => {
-  try {
-    const response = await axios.post(
-      `/api/snippets/${id}/mark`,
-      JSON.stringify({ mark }),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    const data = response.data;
-    dispatch(getSnippet(id));
-    return data;
   } catch (err) {
     rejectWithValue(err);
   }
@@ -122,14 +46,7 @@ export const setSnippetMark = createAsyncThunk<
 const snippetsSlice = createSlice({
   name: 'snippets',
   initialState,
-  reducers: {
-    setNextPage(state) {
-      state.currentPage++;
-    },
-    setPrevPage(state) {
-      state.currentPage--;
-    },
-  },
+  reducers: {},
   extraReducers(builder) {
     builder.addCase(getAllSnippets.pending, (state) => {
       state.status = 'pending';
@@ -149,18 +66,12 @@ const snippetsSlice = createSlice({
       state.status = 'rejected';
       state.data = [];
     });
-    builder.addCase(
-      getSnippet.fulfilled,
-      (state, action: PayloadAction<Snippet>) => {
-        const snippet = action.payload;
-        state.data = state.data.map((item) => {
-          if (item.id === snippet.id) return snippet;
-          return item;
-        });
-      },
+    addMarkReducers(
+      builder,
+      (state) => state.data,
+      (_) => null,
     );
   },
 });
 
 export default snippetsSlice.reducer;
-export const { setNextPage, setPrevPage } = snippetsSlice.actions;

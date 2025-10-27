@@ -1,0 +1,13 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
+.codeEditor {
+  border: 1px solid map.get(colors.$colors, 'secondary');
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.postBtn {
+  width: 100px;
+}

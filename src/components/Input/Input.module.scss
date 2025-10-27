@@ -1,7 +1,11 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  position: relative;
 }
 
 .label {
@@ -16,13 +20,21 @@
   width: 100%;
   border-radius: 4px;
   padding: 10px;
-  border: 1px solid #b3b3b3;
+  border: 1px solid map.get(colors.$colors, 'secondary');
   outline: none;
   transition: 100ms;
   &:hover {
-    border: 1px solid #1b75d0;
+    border: 1px solid map.get(colors.$colors, 'primary');
   }
   &:focus {
-    border: 2px solid #1b75d0;
+    border: 2px solid map.get(colors.$colors, 'primary');
   }
+}
+
+.error {
+  color: map.get(colors.$colors, 'error');
+  font-size: 10px;
+  position: absolute;
+  top: 100%;
+  left: 0;
 }

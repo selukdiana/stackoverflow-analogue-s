@@ -4,13 +4,12 @@ import { FaUser } from 'react-icons/fa';
 import { AiOutlineLike, AiOutlineDislike } from 'react-icons/ai';
 import { FaRegComments } from 'react-icons/fa6';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router';
 
 import styles from './Snippet.module.scss';
-import {
-  setSnippetMark,
-  type Snippet as SnippetType,
-} from '../../store/slices/snippetsSlice';
+import { type Snippet as SnippetType } from '../../store/types';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setSnippetMark } from '../../store/slices/snippetMarks';
 
 type SnippetProps = SnippetType;
 
@@ -23,6 +22,7 @@ export const Snippet = ({
   id,
 }: SnippetProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { status, user: currentUser } = useAppSelector((state) => state.auth);
   const isAuthorized = status === 'authorized';
 
@@ -62,22 +62,28 @@ export const Snippet = ({
     isAuthorized && styles.active,
   );
 
+  type PayloadType = {
+    mark: 'like' | 'dislike';
+    id: string;
+  };
   const handleLikeClick = () => {
-    dispatch(
-      setSnippetMark({
-        mark: 'like',
-        id,
-      }),
-    );
+    const payload: PayloadType = {
+      mark: 'like',
+      id,
+    };
+    dispatch(setSnippetMark(payload));
   };
 
   const handleDislikeClick = () => {
-    dispatch(
-      setSnippetMark({
-        mark: 'dislike',
-        id,
-      }),
-    );
+    const payload: PayloadType = {
+      mark: 'dislike',
+      id,
+    };
+    dispatch(setSnippetMark(payload));
+  };
+
+  const handleCommentClick = () => {
+    navigate(`/snippet/${id}`);
   };
 
   return (
@@ -107,7 +113,10 @@ export const Snippet = ({
           </div>
         </div>
         <div className={styles.infoItem}>
-          <FaRegComments className={iCommentClasses} />
+          <FaRegComments
+            className={iCommentClasses}
+            onClick={handleCommentClick}
+          />
           <span>{commentsCount}</span>
         </div>
       </div>

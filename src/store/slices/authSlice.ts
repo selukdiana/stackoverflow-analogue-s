@@ -3,27 +3,44 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
+
+import type { AuthStatus, User, Error } from '../types';
+import { resetStore } from '../appActions';
 
 interface AuthState {
-  status: 'unauthorized' | 'registered' | 'authorized' | 'pending';
-  user?: {
-    username: string;
-    id: string;
-  };
+  status: AuthStatus;
+  user?: User;
+  errors: Error[];
 }
 
 const initialState: AuthState = {
   status: 'unauthorized',
+  errors: [],
 };
 
+export const checkAuth = createAsyncThunk<
+  User,
+  undefined,
+  { rejectValue: unknown }
+>('auth/checkAuth', async (_, { rejectWithValue }) => {
+  try {
+    const response = await axios.get('/api/me', {
+      withCredentials: true,
+    });
+    return response.data.data;
+  } catch (err) {
+    return rejectWithValue(err);
+  }
+});
+
 export const loginUser = createAsyncThunk<
-  { username: string; id: string },
+  User,
   {
     username: string;
     password: string;
   },
-  { rejectValue: unknown }
+  { rejectValue: string }
 >('auth/loginUser', async (userData, { rejectWithValue }) => {
   try {
     const response = await axios.post(
@@ -38,21 +55,19 @@ export const loginUser = createAsyncThunk<
     );
     return response.data.data;
   } catch (err) {
-    return rejectWithValue(err);
+    if (isAxiosError(err) && err.response?.data?.message) {
+      return rejectWithValue(err.response?.data?.message);
+    }
   }
 });
 
 export const registerUser = createAsyncThunk<
-  {
-    id: number;
-    username: string;
-    role: string;
-  },
+  User,
   {
     username: string;
     password: string;
   },
-  { rejectValue: unknown }
+  { rejectValue: Error[] }
 >('auth/registerUser', async (userData, { rejectWithValue }) => {
   try {
     const response = await axios.post(
@@ -67,7 +82,9 @@ export const registerUser = createAsyncThunk<
     const data = response.data;
     return data;
   } catch (err) {
-    return rejectWithValue(err);
+    if (isAxiosError(err) && err.response?.data?.errors) {
+      return rejectWithValue(err.response.data.errors as Error[]);
+    }
   }
 });
 
@@ -75,13 +92,12 @@ export const logoutUser = createAsyncThunk<
   undefined,
   undefined,
   { rejectValue: unknown }
->('auth/logoutUser', async (_, { rejectWithValue }) => {
+>('auth/logoutUser', async (_, { rejectWithValue, dispatch }) => {
   try {
-    const response = await axios.post('/api/auth/logout', {
+    await axios.post('/api/auth/logout', {
       withCredentials: true,
     });
-    const data = response.data;
-    return data;
+    dispatch(resetStore());
   } catch (err) {
     return rejectWithValue(err);
   }
@@ -94,28 +110,57 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(loginUser.pending, (state) => {
       state.status = 'pending';
+      state.errors = [];
     });
     builder.addCase(
       loginUser.fulfilled,
-      (state, action: PayloadAction<{ username: string; id: string }>) => {
-        const { username, id } = action.payload;
+      (state, action: PayloadAction<User>) => {
+        const user = action.payload;
         state.status = 'authorized';
-        state.user = { username, id };
+        state.user = user;
+        state.errors = [];
       },
     );
-    builder.addCase(loginUser.rejected, (state) => {
-      state.status = 'unauthorized';
-    });
+    builder.addCase(
+      loginUser.rejected,
+      (state, action: PayloadAction<string | undefined>) => {
+        state.status = 'unauthorized';
+        if (action.payload) {
+          state.errors = [
+            { field: '', recievedValue: '', failures: [action.payload] },
+          ];
+        }
+      },
+    );
     builder.addCase(registerUser.pending, (state) => {
       state.status = 'pending';
+      state.errors = [];
     });
     builder.addCase(registerUser.fulfilled, (state) => {
       state.status = 'registered';
+      state.errors = [];
     });
-    builder.addCase(registerUser.rejected, (state) => {
-      state.status = 'unauthorized';
-    });
+    builder.addCase(
+      registerUser.rejected,
+      (state, action: PayloadAction<Error[] | undefined>) => {
+        state.status = 'unauthorized';
+        state.status = 'unauthorized';
+        if (action.payload) {
+          state.errors = action.payload;
+        }
+      },
+    );
     builder.addCase(logoutUser.fulfilled, () => initialState);
+    builder.addCase(
+      checkAuth.fulfilled,
+      (state, action: PayloadAction<User>) => {
+        const user = action.payload;
+        state.status = 'authorized';
+        state.user = user;
+        state.errors = [];
+      },
+    );
+    builder.addCase(checkAuth.rejected, () => initialState);
   },
 });
 

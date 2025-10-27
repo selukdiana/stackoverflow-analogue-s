@@ -1,14 +1,17 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .link {
   margin-bottom: 5px;
   display: flex;
   justify-content: end;
   max-width: 100%;
   & a {
-    color: rgb(0, 105, 128);
+    color: map.get(colors.$link, 'text');
     font-size: 13px;
     transition: 300ms;
     &:hover {
-      color: rgb(0, 74, 91);
+      color: map.get(colors.$link, 'text');
     }
   }
 }
