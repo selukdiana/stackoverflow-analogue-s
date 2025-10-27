@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .pagination {
   display: flex;
   align-items: center;
@@ -9,12 +12,12 @@
 .btn {
   border: none;
   background-color: transparent;
-  color: #1b75d0;
+  color: map.get(colors.$colors, 'primary');
   font-size: 24px;
   cursor: pointer;
   transition: 0.3s;
   &:hover {
-    color: rgb(20, 81, 142);
+    color: map.get(colors.$colors, 'primary-hover');
   }
   &:active {
     transform: scale(0.9);
@@ -22,6 +25,6 @@
 
   &:disabled {
     pointer-events: none;
-    color: #93a6ba;
+    color: map.get(colors.$colors, 'disabled');
   }
 }

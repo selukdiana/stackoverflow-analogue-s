@@ -1,4 +1,23 @@
 $colors: (
-  'primary': #000,
+  'primary': #1b75d0,
+  'secondary': #93a6ba,
   'background': #f1f2f3,
+  'text': white,
+  'shadow': rgba(34, 60, 80, 0.2),
+  'shadow-hover': rgba(0, 145, 255, 0.2),
+  'error': red,
+  'primary-hover': rgb(20, 81, 142),
+  'disabled': #93a6ba,
+  'bg': white,
+  'bg-disabled': grey,
+);
+
+$comment: (
+  'bg': rgba(27, 117, 208, 0.1),
+  'text': rgb(63, 63, 63),
+);
+
+$link: (
+  'text': rgb(0, 105, 128),
+  'text-hover': rgb(0, 74, 91),
 );

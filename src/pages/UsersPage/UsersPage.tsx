@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { getUsers } from '../../store/slices/usersSlice';
 import { UserItem } from '../../components/UserItem';
 import { Pagination } from '../../components/Pagination';
-import styles from './UsersPage.module.scss';
 
 export const UsersPage = () => {
   const dispatch = useAppDispatch();

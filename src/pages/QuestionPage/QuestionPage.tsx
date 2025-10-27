@@ -46,13 +46,16 @@ export const QuestionPage = () => {
 
   useEffect(() => {
     reset(question);
-  }, [question]);
+  }, [question, reset]);
 
   useEffect(() => {
-    if (mode === 'create') return;
+    if (mode === 'create') {
+      reset({ title: '', description: '', attachedCode: '' });
+      return;
+    }
     if (!id) return;
     dispatch(getQuestion(id));
-  }, [mode, dispatch, id]);
+  }, [mode, dispatch, id, reset]);
 
   return (
     <div className={styles.questionContainer}>

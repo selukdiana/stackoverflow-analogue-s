@@ -1,5 +1,8 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .codeEditor {
-  border: 1px solid #caced1;
+  border: 1px solid map.get(colors.$colors, 'secondary');
   border-radius: 0.25rem;
   overflow: hidden;
   margin-top: 20px;

@@ -1,7 +1,10 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .comment {
   border-radius: 4px;
-  background-color: rgba(27, 117, 208, 0.1);
+  background-color: map.get(colors.$comment, 'bg');
   margin-bottom: 5px;
   padding: 10px;
-  color: rgb(63, 63, 63);
+  color: map.get(colors.$comment, 'text');
 }

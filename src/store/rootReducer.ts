@@ -1,8 +1,4 @@
-import {
-  combineReducers,
-  createAction,
-  type UnknownAction,
-} from '@reduxjs/toolkit';
+import { combineReducers, type UnknownAction } from '@reduxjs/toolkit';
 
 import authReducer from './slices/authSlice';
 import snippetsReducer from './slices/snippetsSlice';
@@ -12,6 +8,7 @@ import newSnippetReducer from './slices/newSnippetSlice';
 import questionsReducer from './slices/questionsSlice';
 import currentQuestionReducer from './slices/currentQuestionSlice';
 import usersReducer from './slices/usersSlice';
+import { resetStore } from './appActions';
 
 const combinedReducer = combineReducers({
   auth: authReducer,
@@ -23,7 +20,6 @@ const combinedReducer = combineReducers({
   currentQuestion: currentQuestionReducer,
   users: usersReducer,
 });
-export const resetStore = createAction('app/resetStore');
 
 const rootReducer = (
   state: ReturnType<typeof combinedReducer> | undefined,

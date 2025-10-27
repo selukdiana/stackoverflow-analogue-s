@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .newBtn {
   border: none;
   outline: none;
@@ -6,6 +9,6 @@
   font-size: 16px;
   transition: 0.3s;
   &:hover {
-    color: #1b75d0;
+    color: map.get(colors.$colors, 'primary');
   }
 }

@@ -6,7 +6,7 @@ import {
 import axios, { isAxiosError } from 'axios';
 
 import type { Account, LoadingStatus, Error } from '../types';
-import { resetStore } from '../rootReducer';
+import { resetStore } from '../appActions';
 
 interface AccountState {
   status: LoadingStatus;

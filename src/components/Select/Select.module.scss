@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use '../../colors.scss' as colors;
+
 .customSelect {
   margin-top: 3rem;
   position: relative;
@@ -12,9 +15,10 @@
   align-items: center;
   width: 100%;
   padding: 0.675em 1em;
-  border: 1px solid #caced1;
+  // border: 1px solid #caced1;
+  border: 1px solid map.get(colors.$colors, 'secondary');
   border-radius: 0.25rem;
-  background-color: white;
+  background-color: map.get(colors.$colors, 'bg');
   cursor: pointer;
 }
 .arrow {
@@ -28,9 +32,10 @@
   top: 100%;
   left: 0;
   width: 100%;
-  border: 1px solid #caced1;
+  // border: 1px solid #caced1;
+  border: 1px solid map.get(colors.$colors, 'secondary');
   border-radius: 0.25rem;
-  background-color: white;
+  background-color: map.get(colors.$colors, 'bg');
   list-style: none;
   padding: 10px;
   margin: 10px 0 0;
