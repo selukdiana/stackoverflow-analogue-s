@@ -5,34 +5,23 @@ import {
 } from '@reduxjs/toolkit';
 import { isAxiosError } from 'axios';
 
-import type { Account, LoadingStatus, Error } from '../types';
-import { resetStore } from '../appActions';
+import type { Account, Error } from '../types';
 import api from '../../api';
+import { clearAuth } from './authSlice';
 
 interface AccountState {
-  status: LoadingStatus;
-  data: Account;
-  errors: Error[];
+  isLoading: boolean;
+  data?: Account;
+  error: null | string;
+  usernameErrors: Error[];
+  passwordErrors: Error[];
 }
 
 const initialState: AccountState = {
-  status: 'pending',
-  data: {
-    username: '',
-    id: '',
-    role: 'user',
-    statistic: {
-      snippetsCount: 0,
-      rating: 0,
-      commentsCount: 0,
-      likesCount: 0,
-      dislikesCount: 0,
-      questionsCount: 0,
-      correctAnswersCount: 0,
-      regularAnswersCount: 0,
-    },
-  },
-  errors: [],
+  isLoading: false,
+  error: null,
+  usernameErrors: [],
+  passwordErrors: [],
 };
 
 export const getUserStatistic = createAsyncThunk<
@@ -60,7 +49,7 @@ export const deleteUser = createAsyncThunk<
     await api.delete(`/me`, {
       withCredentials: true,
     });
-    dispatch(resetStore());
+    dispatch(clearAuth());
   } catch (err) {
     return rejectWithValue(err);
   }
@@ -69,7 +58,7 @@ export const deleteUser = createAsyncThunk<
 export const changeUsername = createAsyncThunk<
   undefined,
   { username: string },
-  { rejectValue: Error[] }
+  { rejectValue: Error[] | string }
 >('account/changeUsername', async (userData, { rejectWithValue, dispatch }) => {
   try {
     await api.patch(`/me`, JSON.stringify(userData), {
@@ -78,10 +67,13 @@ export const changeUsername = createAsyncThunk<
         'Content-Type': 'application/json',
       },
     });
-    dispatch(resetStore());
+    dispatch(clearAuth());
   } catch (err) {
-    if (isAxiosError(err) && err.response?.data?.errors) {
-      return rejectWithValue(err.response.data.errors);
+    if (isAxiosError(err)) {
+      if (err.response?.data?.errors)
+        return rejectWithValue(err.response.data.errors as Error[]);
+      if (err.response?.data?.message)
+        return rejectWithValue(err.response.data.message as string);
     }
   }
 });
@@ -98,12 +90,13 @@ export const changePassword = createAsyncThunk<
         'Content-Type': 'application/json',
       },
     });
-    dispatch(resetStore());
+    dispatch(clearAuth());
   } catch (err) {
-    if (isAxiosError(err) && err.response?.data?.errors) {
-      return rejectWithValue(err.response.data.errors);
-    } else if (isAxiosError(err) && err.response?.data?.message) {
-      return rejectWithValue(err.response.data.message);
+    if (isAxiosError(err)) {
+      if (err.response?.data?.errors)
+        return rejectWithValue(err.response.data.errors as Error[]);
+      if (err.response?.data?.message)
+        return rejectWithValue(err.response.data.message as string);
     }
   }
 });
@@ -114,46 +107,79 @@ const accountSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(getUserStatistic.pending, (state) => {
-      state.status = 'pending';
+      state.isLoading = true;
+      state.error = null;
     });
     builder.addCase(
       getUserStatistic.fulfilled,
       (state, action: PayloadAction<Account>) => {
         const accountStatistic = action.payload;
         state.data = accountStatistic;
-        state.status = 'fullfilled';
+        state.isLoading = false;
       },
     );
+    builder.addCase(getUserStatistic.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message || null;
+    });
     builder.addCase(deleteUser.fulfilled, () => initialState);
     builder.addCase(changeUsername.pending, (state) => {
-      state.errors = [];
+      state.usernameErrors = [];
     });
+    builder.addCase(changeUsername.fulfilled, () => initialState);
     builder.addCase(
       changeUsername.rejected,
-      (state, action: PayloadAction<Error[] | undefined>) => {
+      (state, action: PayloadAction<Error[] | string | undefined>) => {
         if (action.payload) {
-          state.errors = action.payload;
+          if (typeof action.payload === 'string') {
+            state.usernameErrors = [
+              {
+                failures: [action.payload],
+                field: 'form',
+                recievedValue: '',
+              },
+            ];
+          } else {
+            state.usernameErrors = action.payload;
+          }
+        } else {
+          state.usernameErrors = [
+            {
+              failures: ['An Unknown Error!'],
+              field: 'form',
+              recievedValue: '',
+            },
+          ];
         }
       },
     );
     builder.addCase(changePassword.pending, (state) => {
-      state.errors = [];
+      state.passwordErrors = [];
     });
+    builder.addCase(changePassword.fulfilled, () => initialState);
     builder.addCase(
       changePassword.rejected,
       (state, action: PayloadAction<Error[] | string | undefined>) => {
         if (action.payload) {
           if (typeof action.payload === 'string') {
-            state.errors = [
+            state.passwordErrors = [
               {
                 failures: [action.payload],
-                field: 'oldPassword',
+                field: 'form',
                 recievedValue: '',
               },
             ];
           } else {
-            state.errors = action.payload;
+            state.passwordErrors = action.payload;
           }
+        } else {
+          state.passwordErrors = [
+            {
+              failures: ['An Unknown Error!'],
+              field: 'form',
+              recievedValue: '',
+            },
+          ];
         }
       },
     );

@@ -10,8 +10,12 @@ export const UsersPage = () => {
   const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get('page') || 1;
-  const totalPages = useAppSelector((state) => state.users.totalPages);
-  const users = useAppSelector((state) => state.users.data);
+  const {
+    totalPages,
+    data: users,
+    isLoading,
+    error,
+  } = useAppSelector((state) => state.users);
 
   const handleNextPageClick = () => {
     setSearchParams((prev) => {
@@ -33,6 +37,8 @@ export const UsersPage = () => {
     dispatch(getUsers(+page));
   }, [dispatch, page]);
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <>
       <ul>

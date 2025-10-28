@@ -4,12 +4,13 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 
-import type { Links, LoadingStatus, Meta, Snippet } from '../types';
+import type { Links, Meta, Snippet } from '../types';
 import { addMarkReducers } from './snippetMarks';
 import api from '../../api';
 
 interface SnippetsState {
-  status: LoadingStatus;
+  isLoading: boolean;
+  error: null | string;
   data: Snippet[];
   currentPage: number;
   totalPages: number;
@@ -17,7 +18,8 @@ interface SnippetsState {
 
 const initialState: SnippetsState = {
   data: [],
-  status: 'fullfilled',
+  isLoading: false,
+  error: null,
   currentPage: 1,
   totalPages: 1,
 };
@@ -38,8 +40,8 @@ export const getAllSnippets = createAsyncThunk<
     );
     const data = response.data;
     return data.data;
-  } catch (err) {
-    rejectWithValue(err);
+  } catch (e) {
+    return rejectWithValue(e);
   }
 });
 
@@ -49,22 +51,23 @@ const snippetsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder.addCase(getAllSnippets.pending, (state) => {
-      state.status = 'pending';
+      state.isLoading = true;
+      state.error = null;
     });
 
     builder.addCase(
       getAllSnippets.fulfilled,
       (state, action: PayloadAction<SnippetsResponse>) => {
         const { data, meta } = action.payload;
-        state.status = 'fullfilled';
+        state.isLoading = false;
         state.data = data;
         state.currentPage = meta.currentPage;
         state.totalPages = meta.totalPages;
       },
     );
-    builder.addCase(getAllSnippets.rejected, (state) => {
-      state.status = 'rejected';
-      state.data = [];
+    builder.addCase(getAllSnippets.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message || 'Error';
     });
     addMarkReducers(
       builder,

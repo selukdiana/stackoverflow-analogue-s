@@ -19,47 +19,42 @@ import { QuestionPage } from './pages/QuestionPage';
 import { UsersPage } from './pages/UsersPage';
 import { UserPage } from './pages/UserPage';
 
-const router = createBrowserRouter(
-  [
-    {
-      Component: Layout,
-      children: [
-        {
-          path: '/',
-          index: true,
-          Component: HomePage,
-        },
-        {
-          path: '/login',
-          Component: LoginPage,
-        },
-        {
-          path: '/register',
-          Component: RegisterPage,
-        },
-        {
-          Component: PrivateRoutes,
-          children: [
-            {
-              path: '/snippet/:snippetId',
-              Component: SnippetPage,
-            },
-            { path: '/account/:userId', Component: AccountPage },
-            { path: '/snippet/new', Component: CreateSnippetPage },
-            { path: '/snippets', Component: HomePage },
-            { path: '/questions', Component: QuestionsPage },
-            { path: '/question', Component: QuestionPage },
-            { path: '/users', Component: UsersPage },
-            { path: '/user/:userId', Component: UserPage },
-          ],
-        },
-      ],
-    },
-  ],
+const router = createBrowserRouter([
   {
-    // basename: '/stackoverflow-analogue-s',
+    Component: Layout,
+    children: [
+      {
+        path: '/',
+        index: true,
+        Component: HomePage,
+      },
+      {
+        path: '/login',
+        Component: LoginPage,
+      },
+      {
+        path: '/register',
+        Component: RegisterPage,
+      },
+      {
+        Component: PrivateRoutes,
+        children: [
+          {
+            path: '/snippet/:snippetId',
+            Component: SnippetPage,
+          },
+          { path: '/account/:userId', Component: AccountPage },
+          { path: '/snippet/new', Component: CreateSnippetPage },
+          { path: '/snippets', Component: HomePage },
+          { path: '/questions', Component: QuestionsPage },
+          { path: '/question', Component: QuestionPage },
+          { path: '/users', Component: UsersPage },
+          { path: '/user/:userId', Component: UserPage },
+        ],
+      },
+    ],
   },
-);
+]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

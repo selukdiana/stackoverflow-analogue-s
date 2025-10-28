@@ -13,8 +13,12 @@ export const QuestionsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = searchParams.get('page') || 1;
 
-  const totalPages = useAppSelector((state) => state.questions.totalPages);
-  const questions = useAppSelector((state) => state.questions.data);
+  const {
+    totalPages,
+    data: questions,
+    isLoading,
+    error,
+  } = useAppSelector((state) => state.questions);
 
   const handleNextPageClick = () => {
     setSearchParams((prev) => {
@@ -36,6 +40,8 @@ export const QuestionsPage = () => {
     dispatch(getQuestions(+page));
   }, [page, dispatch]);
 
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <>
       <button onClick={() => navigate('/question')} className={styles.newBtn}>

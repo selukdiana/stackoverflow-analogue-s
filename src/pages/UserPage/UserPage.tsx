@@ -15,8 +15,10 @@ export const UserPage = () => {
     dispatch(getUserStatistic(userId));
   }, [userId, dispatch]);
   return (
-    <>
-      <UserInfo {...user} />
-    </>
+    user && (
+      <>
+        <UserInfo {...user} />
+      </>
+    )
   );
 };

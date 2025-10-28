@@ -66,10 +66,11 @@ export const SnippetPage = () => {
           </div>
         </Form>
       </div>
-      {comments.length &&
-        comments
-          .map((comment) => <Comment comment={comment} key={comment.id} />)
-          .reverse()}
+      {comments.length
+        ? comments
+            .map((comment) => <Comment comment={comment} key={comment.id} />)
+            .reverse()
+        : '0 comments...'}
     </div>
   );
 };

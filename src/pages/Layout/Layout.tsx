@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router';
+import { Link, Outlet, useLocation } from 'react-router';
 
 import styles from './Layout.module.scss';
 import { Sidebar } from '../../components/Sidebar';
@@ -9,7 +9,6 @@ import { logoutUser } from '../../store/slices/authSlice';
 
 export const Layout = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const burgerRef = useRef<HTMLButtonElement>(null);
@@ -17,7 +16,6 @@ export const Layout = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate('/login');
   };
 
   const handleBurgerClick = () => {
@@ -44,7 +42,11 @@ export const Layout = () => {
               </Link>
             </div>
             <div className={styles.headerRight}>
-              {status === 'unauthorized' && (
+              {status === 'authorized' ? (
+                <a className={styles.headerLink} onClick={handleLogout}>
+                  Logout
+                </a>
+              ) : (
                 <>
                   <Link to="/login" className={styles.headerLink}>
                     Login
@@ -53,11 +55,6 @@ export const Layout = () => {
                     Register
                   </Link>
                 </>
-              )}
-              {status === 'authorized' && (
-                <a className={styles.headerLink} onClick={handleLogout}>
-                  Logout
-                </a>
               )}
             </div>
           </div>

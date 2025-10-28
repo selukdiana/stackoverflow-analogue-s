@@ -6,6 +6,7 @@ import { Snippet } from '../../components/Snippet';
 import { getAllSnippets } from '../../store/slices/snippetsSlice';
 import styles from './HomePage.module.scss';
 import { Pagination } from '../../components/Pagination';
+import { checkAuth } from '../../store/slices/authSlice';
 
 export const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -13,7 +14,8 @@ export const HomePage = () => {
   const page = searchParams.get('page') || 1;
   const userId = searchParams.get('userId');
   const {
-    status,
+    isLoading,
+    error,
     data: snippets,
     totalPages,
   } = useAppSelector((state) => state.snippets);
@@ -38,21 +40,24 @@ export const HomePage = () => {
     dispatch(getAllSnippets({ page: +page, userId }));
   }, [page, dispatch, userId]);
 
+  useEffect(() => {
+    if (userId) return;
+    dispatch(checkAuth());
+  }, [dispatch, userId]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     <main className={styles.homePage}>
-      {status === 'pending' && 'loading'}
-      {status === 'fullfilled' &&
-        snippets.map((snippet) => {
-          return <Snippet {...snippet} key={snippet.id} />;
-        })}
-      {status === 'fullfilled' && (
-        <Pagination
-          currentPage={+page}
-          handleNextClick={handleNextPageClick}
-          handlePrevClick={handlePrevPageClick}
-          totalPages={totalPages}
-        />
-      )}
+      {snippets.map((snippet) => {
+        return <Snippet {...snippet} key={snippet.id} />;
+      })}
+      <Pagination
+        currentPage={+page}
+        handleNextClick={handleNextPageClick}
+        handlePrevClick={handlePrevPageClick}
+        totalPages={totalPages}
+      />
     </main>
   );
 };

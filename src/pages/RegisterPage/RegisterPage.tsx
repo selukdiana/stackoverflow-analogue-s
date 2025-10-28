@@ -1,5 +1,5 @@
 import { type FormEvent } from 'react';
-import { Navigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import styles from './RegisterPage.module.scss';
 import { Form } from '../../components/Form';
@@ -12,8 +12,7 @@ import { useForm } from '../../hooks';
 
 export const RegisterPage = () => {
   const dispatch = useAppDispatch();
-
-  const status = useAppSelector((state) => state.auth.status);
+  const navigate = useNavigate();
   const errors = useAppSelector((state) => state.auth.errors);
 
   const { values: registerFormState, handleChange: onRegisterFormChange } =
@@ -29,21 +28,20 @@ export const RegisterPage = () => {
     !registerFormState.confirmPassword ||
     registerFormState.password !== registerFormState.confirmPassword;
 
-  const handleRegisterFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleRegisterFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (registerFormState.password !== registerFormState.confirmPassword)
       return;
-    dispatch(
+    await dispatch(
       registerUser({
         username: registerFormState.username,
         password: registerFormState.password,
       }),
     );
+    navigate('/login');
   };
 
-  return status === 'registered' ? (
-    <Navigate to="/login" />
-  ) : (
+  return (
     <div className={styles.registerPage}>
       <div className={styles.registerForm}>
         <Form handleFormSubmit={handleRegisterFormSubmit}>

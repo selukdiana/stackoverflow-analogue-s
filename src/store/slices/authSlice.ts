@@ -6,7 +6,6 @@ import {
 import { isAxiosError } from 'axios';
 
 import type { AuthStatus, User, Error } from '../types';
-import { resetStore } from '../appActions';
 import api from '../../api';
 
 interface AuthState {
@@ -16,7 +15,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  status: 'unauthorized',
+  status: 'pending',
   errors: [],
 };
 
@@ -50,7 +49,7 @@ export const loginUser = createAsyncThunk<
         'Content-Type': 'application/json',
       },
     });
-    return response.data;
+    return response.data.data;
   } catch (err) {
     if (isAxiosError(err) && err.response?.data?.message) {
       return rejectWithValue(err.response.data.message);
@@ -76,7 +75,7 @@ export const registerUser = createAsyncThunk<
         'Content-Type': 'application/json',
       },
     });
-    const data = response.data;
+    const data = response.data.data;
     return data;
   } catch (err) {
     if (isAxiosError(err) && err.response?.data?.errors) {
@@ -89,12 +88,11 @@ export const logoutUser = createAsyncThunk<
   undefined,
   undefined,
   { rejectValue: unknown }
->('auth/logoutUser', async (_, { rejectWithValue, dispatch }) => {
+>('auth/logoutUser', async (_, { rejectWithValue }) => {
   try {
     await api.post('/auth/logout', {
       withCredentials: true,
     });
-    dispatch(resetStore());
   } catch (err) {
     return rejectWithValue(err);
   }
@@ -103,7 +101,12 @@ export const logoutUser = createAsyncThunk<
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialState,
-  reducers: {},
+  reducers: {
+    clearAuth: (state) => {
+      state.status = 'unauthorized';
+      state.errors = [];
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(loginUser.pending, (state) => {
       state.status = 'pending';
@@ -115,7 +118,6 @@ const authSlice = createSlice({
         const user = action.payload;
         state.status = 'authorized';
         state.user = user;
-        state.errors = [];
       },
     );
     builder.addCase(
@@ -134,31 +136,41 @@ const authSlice = createSlice({
       state.errors = [];
     });
     builder.addCase(registerUser.fulfilled, (state) => {
-      state.status = 'registered';
-      state.errors = [];
+      state.status = 'unauthorized';
     });
     builder.addCase(
       registerUser.rejected,
       (state, action: PayloadAction<Error[] | undefined>) => {
-        state.status = 'unauthorized';
         state.status = 'unauthorized';
         if (action.payload) {
           state.errors = action.payload;
         }
       },
     );
-    builder.addCase(logoutUser.fulfilled, () => initialState);
+    builder.addCase(logoutUser.pending, (state) => {
+      state.status = 'pending';
+      state.errors = [];
+    });
+    builder.addCase(logoutUser.fulfilled, (state) => {
+      state.status = 'unauthorized';
+    });
+    builder.addCase(checkAuth.pending, (state) => {
+      state.status = 'pending';
+      state.errors = [];
+    });
     builder.addCase(
       checkAuth.fulfilled,
       (state, action: PayloadAction<User>) => {
         const user = action.payload;
         state.status = 'authorized';
         state.user = user;
-        state.errors = [];
       },
     );
-    builder.addCase(checkAuth.rejected, () => initialState);
+    builder.addCase(checkAuth.rejected, (state) => {
+      state.status = 'unauthorized';
+    });
   },
 });
 
+export const { clearAuth } = authSlice.actions;
 export default authSlice.reducer;

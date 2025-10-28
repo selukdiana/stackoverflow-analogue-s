@@ -1,8 +1,4 @@
-export type AuthStatus =
-  | 'unauthorized'
-  | 'registered'
-  | 'authorized'
-  | 'pending';
+export type AuthStatus = 'unauthorized' | 'authorized' | 'pending';
 
 export type User = {
   username: string;

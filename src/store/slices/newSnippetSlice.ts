@@ -40,16 +40,12 @@ export const createSnippet = createAsyncThunk<
   { rejectValue: unknown }
 >('newSnippet/create', async (snippetData, { rejectWithValue }) => {
   try {
-    const response = await api.post(
-      `/snippets`,
-      JSON.stringify(snippetData),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await api.post(`/snippets`, JSON.stringify(snippetData), {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+    });
     const data = response.data;
     return data.data;
   } catch (err) {

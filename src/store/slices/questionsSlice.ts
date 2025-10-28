@@ -4,11 +4,12 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 
-import type { Links, LoadingStatus, Meta, Question } from '../types';
+import type { Links, Meta, Question } from '../types';
 import api from '../../api';
 
 interface QuestionsState {
-  status: LoadingStatus;
+  isLoading: boolean;
+  error: null | string;
   currentPage: number;
   totalPages: number;
   data: Question[];
@@ -21,7 +22,8 @@ interface QuestionsResponse {
 }
 const initialState: QuestionsState = {
   data: [],
-  status: 'pending',
+  isLoading: false,
+  error: null,
   currentPage: 1,
   totalPages: 1,
 };
@@ -50,16 +52,24 @@ const questionsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
+    builder.addCase(getQuestions.pending, (state) => {
+      state.error = null;
+      state.isLoading = true;
+    });
     builder.addCase(
       getQuestions.fulfilled,
       (state, action: PayloadAction<QuestionsResponse>) => {
         const { data, meta } = action.payload;
-        state.status = 'fullfilled';
+        state.isLoading = false;
         state.data = data;
         state.currentPage = meta.currentPage;
         state.totalPages = meta.totalPages;
       },
     );
+    builder.addCase(getQuestions.rejected, (state, action) => {
+      state.error = action.error.message || null;
+      state.isLoading = false;
+    });
   },
 });
 

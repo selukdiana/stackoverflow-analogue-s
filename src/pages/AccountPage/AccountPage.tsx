@@ -28,9 +28,11 @@ export const AccountPage = () => {
   });
 
   const {
-    status,
+    isLoading,
     data: accountInfo,
-    errors,
+    error,
+    usernameErrors,
+    passwordErrors,
   } = useAppSelector((state) => state.account);
 
   const isChangePasswordBtnDisabled =
@@ -62,63 +64,80 @@ export const AccountPage = () => {
     dispatch(getUserStatistic(userId));
   }, [userId, dispatch]);
 
-  if (status === 'pending') return 'Loading...';
-  if (status === 'rejected') return 'Error';
+  if (isLoading) return 'Loading...';
+  if (error) return 'Error';
   return (
-    <>
-      <h3 className={styles.username}>
-        Welcome, <span>{accountInfo.username}</span>
-      </h3>
-      <UserInfo {...accountInfo} />
-      <div className={styles.accountForms}>
-        <Form handleFormSubmit={handleChangeUsernameClick}>
-          <Input
-            label="Change your username:"
-            type="text"
-            name="username"
-            onChange={onUsernameChange}
-            value={newUsername.username}
+    accountInfo && (
+      <>
+        <h3 className={styles.username}>
+          Welcome, <span>{accountInfo.username}</span>
+        </h3>
+        <UserInfo {...accountInfo} />
+        <div className={styles.accountForms}>
+          <Form
+            handleFormSubmit={handleChangeUsernameClick}
             error={
-              errors.find((error) => error.field === 'username')?.failures[0]
+              usernameErrors.find((error) => error.field === 'form')
+                ?.failures[0]
             }
-          ></Input>
-          <Button disabled={isChangeUsernameBtnDisabled}>
-            Change username
-          </Button>
-        </Form>
-        <Form handleFormSubmit={handleChangePasswordClick}>
-          <Input
-            label="Old password:"
-            type="password"
-            name="oldPassword"
-            value={pwd.oldPassword}
-            onChange={onPwdChange}
+          >
+            <Input
+              label="Change your username:"
+              type="text"
+              name="username"
+              onChange={onUsernameChange}
+              value={newUsername.username}
+              error={
+                usernameErrors.find((error) => error.field === 'username')
+                  ?.failures[0]
+              }
+            ></Input>
+            <Button disabled={isChangeUsernameBtnDisabled}>
+              Change username
+            </Button>
+          </Form>
+          <Form
+            handleFormSubmit={handleChangePasswordClick}
             error={
-              errors.find((error) => error.field === 'oldPassword')?.failures[0]
+              passwordErrors.find((error) => error.field === 'form')
+                ?.failures[0]
             }
-          />
-          <Input
-            label="New password:"
-            type="password"
-            name="newPassword"
-            value={pwd.newPassword}
-            onChange={onPwdChange}
-            error={
-              errors.find((error) => error.field === 'newPassword')?.failures[0]
-            }
-          />
-          <Input
-            label="Confirm password:"
-            type="password"
-            name="confirmNewPassword"
-            value={pwd.confirmNewPassword}
-            onChange={onPwdChange}
-          />
-          <Button disabled={isChangePasswordBtnDisabled}>
-            Change password
-          </Button>
-        </Form>
-      </div>
-    </>
+          >
+            <Input
+              label="Old password:"
+              type="password"
+              name="oldPassword"
+              value={pwd.oldPassword}
+              onChange={onPwdChange}
+              error={
+                passwordErrors.find((error) => error.field === 'oldPassword')
+                  ?.failures[0]
+              }
+            />
+            <Input
+              label="New password:"
+              type="password"
+              name="newPassword"
+              value={pwd.newPassword}
+              onChange={onPwdChange}
+              error={
+                passwordErrors.find((error) => error.field === 'newPassword')
+                  ?.failures[0]
+              }
+            />
+            <Input
+              label="Confirm password:"
+              type="password"
+              name="confirmNewPassword"
+              value={pwd.confirmNewPassword}
+              onChange={onPwdChange}
+            />
+            <Button disabled={isChangePasswordBtnDisabled}>
+              Change password
+            </Button>
+          </Form>
+        </div>
+      </>
+    )
   );
 };

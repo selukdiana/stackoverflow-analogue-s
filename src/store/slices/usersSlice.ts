@@ -4,12 +4,13 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit';
 
-import type { Links, LoadingStatus, Meta, User } from '../types';
+import type { Links, Meta, User } from '../types';
 import api from '../../api';
 
 interface UsersState {
   data: User[];
-  status: LoadingStatus;
+  isLoading: boolean;
+  error: null | string;
   currentPage: number;
   totalPages: number;
 }
@@ -21,7 +22,8 @@ interface UsersResponse {
 }
 const initialState: UsersState = {
   data: [],
-  status: 'pending',
+  isLoading: false,
+  error: null,
   currentPage: 1,
   totalPages: 1,
 };
@@ -50,16 +52,24 @@ const usersSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
+    builder.addCase(getUsers.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
     builder.addCase(
       getUsers.fulfilled,
       (state, action: PayloadAction<UsersResponse>) => {
         const { data, meta } = action.payload;
-        state.status = 'fullfilled';
+        state.isLoading = false;
         state.data = data;
         state.currentPage = meta.currentPage;
         state.totalPages = meta.totalPages;
       },
     );
+    builder.addCase(getUsers.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message || null;
+    });
   },
 });
 
