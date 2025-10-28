@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-export default defineConfig({
+export default defineConfig(() => ({
   plugins: [react()],
   // base: '/stackoverflow-analogue-s/',
   css: {
@@ -9,4 +9,13 @@ export default defineConfig({
       scss: {},
     },
   },
-});
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://codelang.vercel.app/',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+}));
