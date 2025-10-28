@@ -8,12 +8,19 @@ import { getUserStatistic } from '../../store/slices/accountSlice';
 export const UserPage = () => {
   const dispatch = useAppDispatch();
   const { userId } = useParams();
-  const user = useAppSelector((state) => state.account.data);
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useAppSelector((state) => state.account);
 
   useEffect(() => {
     if (!userId) return;
     dispatch(getUserStatistic(userId));
   }, [userId, dispatch]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
   return (
     user && (
       <>

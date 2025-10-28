@@ -42,11 +42,12 @@ export const Layout = () => {
               </Link>
             </div>
             <div className={styles.headerRight}>
-              {status === 'authorized' ? (
+              {status === 'authorized' && (
                 <a className={styles.headerLink} onClick={handleLogout}>
                   Logout
                 </a>
-              ) : (
+              )}
+              {status === 'unauthorized' && (
                 <>
                   <Link to="/login" className={styles.headerLink}>
                     Login
