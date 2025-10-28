@@ -3,10 +3,11 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios, { isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 import type { AuthStatus, User, Error } from '../types';
 import { resetStore } from '../appActions';
+import api from '../../api';
 
 interface AuthState {
   status: AuthStatus;
@@ -25,7 +26,7 @@ export const checkAuth = createAsyncThunk<
   { rejectValue: unknown }
 >('auth/checkAuth', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('/api/me', {
+    const response = await api.get('/me', {
       withCredentials: true,
     });
     return response.data.data;
@@ -43,21 +44,21 @@ export const loginUser = createAsyncThunk<
   { rejectValue: string }
 >('auth/loginUser', async (userData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      '/api/auth/login',
-      JSON.stringify(userData),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await api.post('/auth/login', JSON.stringify(userData), {
+      // withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
-    return response.data.data;
+    });
+    return response.data;
   } catch (err) {
     if (isAxiosError(err) && err.response?.data?.message) {
-      return rejectWithValue(err.response?.data?.message);
+      return rejectWithValue(err.response.data.message);
     }
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+    return rejectWithValue('An unknown error occurred.');
   }
 });
 
@@ -70,15 +71,11 @@ export const registerUser = createAsyncThunk<
   { rejectValue: Error[] }
 >('auth/registerUser', async (userData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      '/api/register',
-      JSON.stringify(userData),
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await api.post('/register', JSON.stringify(userData), {
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+    });
     const data = response.data;
     return data;
   } catch (err) {
@@ -94,7 +91,7 @@ export const logoutUser = createAsyncThunk<
   { rejectValue: unknown }
 >('auth/logoutUser', async (_, { rejectWithValue, dispatch }) => {
   try {
-    await axios.post('/api/auth/logout', {
+    await api.post('/auth/logout', {
       withCredentials: true,
     });
     dispatch(resetStore());

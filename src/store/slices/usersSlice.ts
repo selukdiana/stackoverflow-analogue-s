@@ -3,9 +3,9 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { Links, LoadingStatus, Meta, User } from '../types';
+import api from '../../api';
 
 interface UsersState {
   data: User[];
@@ -32,8 +32,8 @@ export const getUsers = createAsyncThunk<
   { rejectValue: unknown }
 >('users/getUsers', async (page, { rejectWithValue }) => {
   try {
-    const response = await axios.get(
-      `/api/users?page=${page}&limit=15&sortBy=id:ASC`,
+    const response = await api.get(
+      `/users?page=${page}&limit=15&sortBy=id:ASC`,
       {
         withCredentials: true,
       },

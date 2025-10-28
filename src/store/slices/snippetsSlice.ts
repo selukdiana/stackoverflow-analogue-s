@@ -3,10 +3,10 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { Links, LoadingStatus, Meta, Snippet } from '../types';
 import { addMarkReducers } from './snippetMarks';
+import api from '../../api';
 
 interface SnippetsState {
   status: LoadingStatus;
@@ -33,8 +33,8 @@ export const getAllSnippets = createAsyncThunk<
   { rejectValue: unknown }
 >('snippets/getAll', async ({ page, userId }, { rejectWithValue }) => {
   try {
-    const response = await axios.get(
-      `/api/snippets?page=${page}&limit=15&sortBy=id:ASC${userId ? '&userId=' + userId : ''}`,
+    const response = await api.get(
+      `/snippets?page=${page}&limit=15&sortBy=id:ASC${userId ? '&userId=' + userId : ''}`,
     );
     const data = response.data;
     return data.data;

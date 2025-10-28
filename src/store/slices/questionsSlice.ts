@@ -3,9 +3,9 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { Links, LoadingStatus, Meta, Question } from '../types';
+import api from '../../api';
 
 interface QuestionsState {
   status: LoadingStatus;
@@ -32,8 +32,8 @@ export const getQuestions = createAsyncThunk<
   { rejectValue: unknown }
 >('questions/getQuestions', async (page, { rejectWithValue }) => {
   try {
-    const response = await axios.get(
-      `/api/questions?page=${page}&limit=15&sortBy=id:DESC`,
+    const response = await api.get(
+      `/questions?page=${page}&limit=15&sortBy=id:DESC`,
       {
         withCredentials: true,
       },

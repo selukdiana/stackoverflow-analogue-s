@@ -3,9 +3,9 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { Question } from '../types';
+import api from '../../api';
 
 type CurrentQuestionState = Pick<
   Question,
@@ -24,7 +24,7 @@ export const getQuestion = createAsyncThunk<
   { rejectValue: unknown }
 >('currentQuestion/getQuestion', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`/api/questions/${id}`, {
+    const response = await api.get(`/questions/${id}`, {
       withCredentials: true,
     });
     const data = response.data;
@@ -40,16 +40,12 @@ export const createQuestion = createAsyncThunk<
   { rejectValue: unknown }
 >('currentQuestion/createQuestion', async (question, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      `/api/questions`,
-      JSON.stringify(question),
-      {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    const response = await api.post(`/questions`, JSON.stringify(question), {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+    });
     const data = response.data;
     return data.data;
   } catch (err) {
@@ -65,8 +61,8 @@ export const editQuestion = createAsyncThunk<
   'currentQuestion/editQuestion',
   async ({ question, id }, { rejectWithValue }) => {
     try {
-      const response = await axios.patch(
-        `/api/questions/${id}`,
+      const response = await api.patch(
+        `/questions/${id}`,
         JSON.stringify(question),
         {
           withCredentials: true,

@@ -3,10 +3,11 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios, { isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 
 import type { Account, LoadingStatus, Error } from '../types';
 import { resetStore } from '../appActions';
+import api from '../../api';
 
 interface AccountState {
   status: LoadingStatus;
@@ -40,7 +41,7 @@ export const getUserStatistic = createAsyncThunk<
   { rejectValue: unknown }
 >('account/getUserStatistic', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`/api/users/${id}/statistic`, {
+    const response = await api.get(`/users/${id}/statistic`, {
       withCredentials: true,
     });
     const data = response.data;
@@ -56,7 +57,7 @@ export const deleteUser = createAsyncThunk<
   { rejectValue: unknown }
 >('account/deleteUser', async (_, { rejectWithValue, dispatch }) => {
   try {
-    await axios.delete(`/api/me`, {
+    await api.delete(`/me`, {
       withCredentials: true,
     });
     dispatch(resetStore());
@@ -71,7 +72,7 @@ export const changeUsername = createAsyncThunk<
   { rejectValue: Error[] }
 >('account/changeUsername', async (userData, { rejectWithValue, dispatch }) => {
   try {
-    await axios.patch(`/api/me`, JSON.stringify(userData), {
+    await api.patch(`/me`, JSON.stringify(userData), {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ export const changePassword = createAsyncThunk<
   { rejectValue: Error[] | string }
 >('account/changePassword', async (userData, { rejectWithValue, dispatch }) => {
   try {
-    await axios.patch(`/api/me/password`, JSON.stringify(userData), {
+    await api.patch(`/me/password`, JSON.stringify(userData), {
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',

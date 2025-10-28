@@ -3,9 +3,9 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { Snippet } from '../types';
+import api from '../../api';
 
 interface NewSnippetState {
   languages: string[];
@@ -21,7 +21,7 @@ export const getLanguages = createAsyncThunk<
   { rejectValue: unknown }
 >('newSnippet/geLanguages', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`/api/snippets/languages`, {
+    const response = await api.get(`/snippets/languages`, {
       withCredentials: true,
     });
     const data = response.data;
@@ -40,8 +40,8 @@ export const createSnippet = createAsyncThunk<
   { rejectValue: unknown }
 >('newSnippet/create', async (snippetData, { rejectWithValue }) => {
   try {
-    const response = await axios.post(
-      `/api/snippets`,
+    const response = await api.post(
+      `/snippets`,
       JSON.stringify(snippetData),
       {
         withCredentials: true,

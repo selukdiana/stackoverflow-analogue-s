@@ -5,10 +5,10 @@ import {
   type Draft,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { User, Mark, Snippet } from '../types';
 import type { RootState } from '..';
+import api from '../../api';
 
 export interface OptimisticPayload {
   id: string;
@@ -44,7 +44,7 @@ export const setSnippetMark = createAsyncThunk<
     const payload: OptimisticPayload = { id, mark, user, previousMark };
     dispatch(optimisticMark(payload));
     try {
-      await axios.post(`/api/snippets/${id}/mark`, JSON.stringify({ mark }), {
+      await api.post(`/snippets/${id}/mark`, JSON.stringify({ mark }), {
         withCredentials: true,
         headers: { 'Content-Type': 'application/json' },
       });

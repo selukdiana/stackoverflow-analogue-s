@@ -3,12 +3,12 @@ import {
   createSlice,
   type PayloadAction,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
 
 import type { RootState } from '..';
 import type { LoadingStatus, Snippet, Comment } from '../types';
 import socket from '../../socket';
 import { addMarkReducers } from './snippetMarks';
+import api from '../../api';
 
 interface CurrentSnippet {
   status: LoadingStatus;
@@ -32,7 +32,7 @@ export const getSnippet = createAsyncThunk<
   { rejectValue: unknown }
 >('currentSnippet/getSnippet', async (id, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`/api/snippets/${id}`);
+    const response = await api.get(`/snippets/${id}`);
     const data = response.data;
     return data.data;
   } catch (err) {
@@ -49,8 +49,8 @@ export const sendComment = createAsyncThunk<
   async (newCommentContent, { rejectWithValue, getState }) => {
     const snippetId = (getState() as RootState).currentSnippet.snippet.id;
     try {
-      const response = await axios.post(
-        `/api/comments`,
+      const response = await api.post(
+        `/comments`,
         JSON.stringify({
           snippetId,
           content: newCommentContent,
