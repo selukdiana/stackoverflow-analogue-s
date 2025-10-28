@@ -45,7 +45,7 @@ export const loginUser = createAsyncThunk<
 >('auth/loginUser', async (userData, { rejectWithValue }) => {
   try {
     const response = await api.post('/auth/login', JSON.stringify(userData), {
-      // withCredentials: true,
+      withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
       },
